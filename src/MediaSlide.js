@@ -6,7 +6,7 @@ import { version } from  '../package.json'
 
 const MediaSlide = (props) => { 
     const {
-
+        gallery
     } = props;
 
     return (
@@ -17,6 +17,6 @@ const MediaSlide = (props) => {
 }
 
 MediaSlide.propTypes = {
-   
-  };
+   gallery: PropTypes.array.isRequired
+};
 export default MediaSlide;
