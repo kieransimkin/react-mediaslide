@@ -11,7 +11,7 @@ const MediaSlide = (props) => {
 
     return (
         <>
-            Hello from MediaSlide 2
+            Hello from MediaSlide 3
         </>
     );
 }
