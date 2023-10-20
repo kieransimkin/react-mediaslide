@@ -1,0 +1,36 @@
+{
+  "devDependencies": {
+    "@babel/cli": "^7.21.5",
+    "@babel/core": "^7.22.1",
+    "@babel/preset-env": "^7.22.2"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-react": "^7.22.3",
+    "core-js": "^3.30.2",
+    "cross-env": "^7.0.3",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0"
+  },
+  "name": "react-mediaslide",
+  "homepage": "https://kieransimkin.co.uk/mediaslide",
+  "author": "Kieran Simkin <382129+kieransimkin@users.noreply.github.com>",
+  "license": "BSD-3-Clause-Attribution",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist && cross-env NODE_ENV=production babel src --out-dir dist --copy-files",
+    "prepare": "npm run build",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieransimkin/react-mediaslide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kieransimkin/react-mediaslide/issues"
+  },
+  "description": ""
+}
