@@ -5,8 +5,8 @@ import * as React from "react";
 import { version } from  '../package.json'
 
 
-const itemHTML = (token) => { 
-    return <li>{token.metadata.name}</li>
+const itemHTML = (item) => { 
+    return <li><img src={item.thumb} width="200" />{item.title}</li>
 }
 const MediaSlide = (props) => { 
     const {
