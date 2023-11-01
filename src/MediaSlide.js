@@ -6,7 +6,7 @@ import { version } from  '../package.json'
 
 
 const itemHTML = (item) => { 
-    return <li><img src={item.thumb} width="200" />{item.title}</li>
+    return <li><img src={item.thumb} width="200" /><br />{item.title}</li>
 }
 const MediaSlide = (props) => { 
     const {
