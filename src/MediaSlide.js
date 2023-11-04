@@ -90,7 +90,6 @@ const MediaSlide = (props) => {
 
     const flipDoubleBuffer = (i) => { 
         if (currentDoubleBuffer==1) { 
-            
             const l = ()=> {  
                 doubleBuffer1.current.style.opacity=1;
                 doubleBuffer2.current.style.opacity=0;
@@ -100,16 +99,20 @@ const MediaSlide = (props) => {
                 doubleBuffer1.current.removeEventListener('load',l);
             }
             const f = () =>  {
-                fileDoubleBuffer1.current.style.opacity=1;
-                fileDoubleBuffer2.current.style.opacity=0;
-                doubleBuffer2.current.style.opacity=0;
-                doubleBuffer1.current.style.opacity=0;
-                setCurrentDoubleBuffer(2);
+                setTimeout(()=> { 
+                    fileDoubleBuffer1.current.style.opacity=1;
+                    fileDoubleBuffer2.current.style.opacity=0;
+                    doubleBuffer2.current.style.opacity=0;
+                    doubleBuffer1.current.style.opacity=0;
+                    setCurrentDoubleBuffer(2);
+                }, 200)
             }
             doubleBuffer1.current.addEventListener('load',l);
-            console.log(i);
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType=='text/html') { 
-                setFileBuffer1(renderFile(i,f));
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
+                renderFile(i,f).then((buf) => { 
+                    setFileBuffer1(buf);
+                })
+                
             } else { 
                 doubleBuffer1.current.src=i.full;
             }
@@ -126,23 +129,24 @@ const MediaSlide = (props) => {
                 doubleBuffer2.current.removeEventListener('load', l);
             }
             const f = () => {
-                fileDoubleBuffer2.current.style.opacity=1;
-                fileDoubleBuffer1.current.style.opacity=0;
-                doubleBuffer1.current.style.opacity=0;
-                doubleBuffer2.current.style.opacity=0;
-                setCurrentDoubleBuffer(1);
+                setTimeout(()=>{
+                    fileDoubleBuffer2.current.style.opacity=1;
+                    fileDoubleBuffer1.current.style.opacity=0;
+                    doubleBuffer1.current.style.opacity=0;
+                    doubleBuffer2.current.style.opacity=0;
+                    setCurrentDoubleBuffer(1);
+                },200);
             }
             doubleBuffer2.current.addEventListener('load', l);
             if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType=='text/html') { 
-                console.log(i.metadata.files);
-                setFileBuffer2(renderFile(i,f));
+                renderFile(i,f).then((buf)=> { 
+                    setFileBuffer2(buf);
+                })
             } else { 
                 doubleBuffer2.current.src=i.full;
             }
             
         }
-        
-        console.log(i.full);
     }
     if (gallery) { 
         if (gallery.length<1) { 
@@ -152,7 +156,6 @@ const MediaSlide = (props) => {
             if (page<totalPages){
                 lElement=<li ref={loadMoreRef}>Loading...</li>
             }
-            //setLastElement(lElement);
             items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
     } else { 
@@ -160,14 +163,9 @@ const MediaSlide = (props) => {
     }
     
     useEffect(() => {
-
         const intersectionObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
               async function fetchMorePosts() {
-                
-                console.log('Fetch More');
-                console.log(onLoadMoreData);
-                console.log(loading);
                 if (page<totalPages && !loading) { 
                     onLoadMoreData(pagination);
                 }
