@@ -1,6 +1,6 @@
 
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { version } from  '../package.json'
 import styles from './MediaSlide.module.css'
 import Slider from 'react-slider';
@@ -89,6 +89,7 @@ const MediaSlide = (props) => {
     }
 
     const flipDoubleBuffer = (i) => { 
+        
         if (currentDoubleBuffer==1) { 
             const l = ()=> {  
                 doubleBuffer1.current.style.opacity=1;
@@ -98,28 +99,30 @@ const MediaSlide = (props) => {
                 setCurrentDoubleBuffer(2);
                 doubleBuffer1.current.removeEventListener('load',l);
             }
-            const f = () =>  {
-                setTimeout(()=> { 
-                    fileDoubleBuffer1.current.style.opacity=1;
-                    fileDoubleBuffer2.current.style.opacity=0;
-                    doubleBuffer2.current.style.opacity=0;
-                    doubleBuffer1.current.style.opacity=0;
-                    setCurrentDoubleBuffer(2);
-                }, 200)
+          
+            const r = () => { 
+                window.postMessage({request:'slideReady'},'*')
             }
-            doubleBuffer1.current.addEventListener('load',l);
             if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
-                renderFile(i,f).then((buf) => { 
+                const messageHandler=(e) => { 
+                    if (e.data.request=='slideReady') { 
+                        fileDoubleBuffer1.current.style.opacity=1;
+                        fileDoubleBuffer2.current.style.opacity=0;
+                        doubleBuffer2.current.style.opacity=0;
+                        doubleBuffer1.current.style.opacity=0;
+                        setCurrentDoubleBuffer(2);
+                        window.removeEventListener('message',messageHandler);
+                    }
+                }
+                window.addEventListener('message', messageHandler);
+                renderFile(i,r).then((buf) => { 
                     setFileBuffer1(buf);
-                })
-                
+                })   
             } else { 
+                doubleBuffer1.current.addEventListener('load',l);
                 doubleBuffer1.current.src=i.full;
             }
-            
-            
         } else {
-            
             const l = ()=> {
                 doubleBuffer2.current.style.opacity=1;
                 doubleBuffer1.current.style.opacity=0;
@@ -128,21 +131,27 @@ const MediaSlide = (props) => {
                 setCurrentDoubleBuffer(1);
                 doubleBuffer2.current.removeEventListener('load', l);
             }
-            const f = () => {
-                setTimeout(()=>{
-                    fileDoubleBuffer2.current.style.opacity=1;
-                    fileDoubleBuffer1.current.style.opacity=0;
-                    doubleBuffer1.current.style.opacity=0;
-                    doubleBuffer2.current.style.opacity=0;
-                    setCurrentDoubleBuffer(1);
-                },200);
+
+            const r = () => { 
+                window.postMessage({request:'slideReady'},'*')
             }
-            doubleBuffer2.current.addEventListener('load', l);
             if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
-                renderFile(i,f).then((buf)=> { 
+                const messageHandler=(e)=>{ 
+                    if (e.data.request=='slideReady') { 
+                        fileDoubleBuffer2.current.style.opacity=1;
+                        fileDoubleBuffer1.current.style.opacity=0;
+                        doubleBuffer1.current.style.opacity=0;
+                        doubleBuffer2.current.style.opacity=0;
+                        setCurrentDoubleBuffer(1);
+                        window.removeEventListener('message',messageHandler)
+                    }
+                }
+                window.addEventListener('message',messageHandler);
+                renderFile(i,r).then((buf)=> { 
                     setFileBuffer2(buf);
                 })
             } else { 
+                doubleBuffer2.current.addEventListener('load', l);
                 doubleBuffer2.current.src=i.full;
             }
             
