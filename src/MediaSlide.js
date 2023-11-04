@@ -138,7 +138,7 @@ const MediaSlide = (props) => {
                 },200);
             }
             doubleBuffer2.current.addEventListener('load', l);
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType=='text/html') { 
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
                 renderFile(i,f).then((buf)=> { 
                     setFileBuffer2(buf);
                 })
