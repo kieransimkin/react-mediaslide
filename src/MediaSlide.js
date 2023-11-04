@@ -148,7 +148,10 @@ const MediaSlide = (props) => {
         if (gallery.length<1) { 
             items=<h1>Not found</h1>
         } else { 
-            const lElement=<li ref={loadMoreRef}>Loading...</li>
+            let lElement;
+            if (page<totalPages){
+                lElement=<li ref={loadMoreRef}>Loading...</li>
+            }
             //setLastElement(lElement);
             items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
