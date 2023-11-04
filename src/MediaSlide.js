@@ -38,14 +38,16 @@ const MediaSlide = (props) => {
     const [viewportHeight, setViewportHeight] = useState(100);
     const [thumbSize, setThumbSize] = useState(200);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [navbarHeight, setNavbarHeight] = useState(100);
+    const [navbarHeight, setNavbarHeight] = useState(60);
     const [viewportWidth, setViewportWidth] = useState(100);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const containerDiv = useRef();
     const portalDiv = useRef();
+    const loadMoreRef = useRef();
     const doubleBuffer1 = useRef();
     const doubleBuffer2 = useRef();
-    const stageHeight = displayType=='slide'?(viewportHeight-navbarHeight)*0.75:0;
+    const stageHeight = displayType=='slide'?(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75):0;
     let items, itemHTML;
     let useThumbSize = thumbSize;
 
@@ -68,12 +70,17 @@ const MediaSlide = (props) => {
         return (e) => { 
             if (selectedItem!=i) { 
                 setSelectedItem(i);
-                if (displayType=='slide') { 
-                    flipDoubleBuffer(i);
-                }
+                if (displayType!='slide') { 
+                    setDisplayType('slide');
+                } 
+                
+                flipDoubleBuffer(i);
             }
         }
     }
+    useEffect(() => { 
+
+    },[selectedItem]);
     const flipDoubleBuffer = (i) => { 
         if (currentDoubleBuffer==1) { 
             const l = ()=> {  
@@ -103,7 +110,7 @@ const MediaSlide = (props) => {
         if (gallery.length<1) { 
             items=<h1>Not found</h1>
         } else { 
-            items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}</ul>
+            items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}<li ref={loadMoreRef}>Loading...</li></ul>
         }
     } else { 
         items = <h1>Loading</h1>
@@ -129,7 +136,16 @@ const MediaSlide = (props) => {
             setDisplayType('thumbnails');
         }
     }
-
+    const toggleFullscreen = () => { 
+        if (displayType!='slide') { 
+            setDisplayType('slide');
+        }
+        if (isFullscreen) { 
+            setIsFullscreen(false);
+        } else { 
+            setIsFullscreen(true);
+        }
+    }
     const slideScroll = (e) => { 
         if (displayType!='slide') return;
         const container = portalDiv.current;
@@ -159,7 +175,18 @@ const MediaSlide = (props) => {
                     />
                 </div>
                 </label>
-                <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="slide" onChange={displayTypeChange} checked={displayType=='slide'} />Slide<br /></label>
+                <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="slide" onChange={displayTypeChange} checked={displayType=='slide'} />Slide<br />
+                <div className={styles['mediaslide-transport-opacity']} style={{opacity:displayType=='slide'?'1':'0.2'}}>
+
+                    <button onClick={toggleFullscreen} className={styles[isFullscreen?'mediaslide-transport-fullscreen-active':'mediaslide-transport-fullscreen']}>&nbsp;</button>
+                    <button className={styles['mediaslide-transport-start']}>⏮</button>
+                    <button className={styles['mediaslide-transport-rewind']}>⏪︎</button>
+                    <button className={styles['mediaslide-transport-stop']}>⏹︎</button>
+                    <button className={styles['mediaslide-transport-play']}>⏵︎</button>
+                    <button className={styles['mediaslide-transport-forward']}>⏩︎</button>
+                    <button className={styles['mediaslide-transport-end']}>⏭</button>
+                </div>
+                </label>
             </nav>
             <section className={styles['mediaslide-slide-stage']} style={{height:stageHeight}}>
             <div className={styles['mediaslide-double-buffer-container']}>
