@@ -255,8 +255,8 @@ const MediaSlide = (props) => {
             <div className={styles['mediaslide-double-buffer-container']} style={{opacity: '1'}}>
                 <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer1} height={stageHeight} />
                 <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer2} height={stageHeight} />
-                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth-10}} src="" ref={fileDoubleBuffer1}>{fileBuffer1}</div>
-                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth-10}} src="" ref={fileDoubleBuffer2}>{fileBuffer2}</div>
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth}} src="" ref={fileDoubleBuffer1}>{fileBuffer1}</div>
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth}} src="" ref={fileDoubleBuffer2}>{fileBuffer2}</div>
             </div>
             </section>
             
