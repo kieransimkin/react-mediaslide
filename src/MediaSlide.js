@@ -31,9 +31,13 @@ const slideItemHTML = (click,ts) => {
 const MediaSlide = (props) => { 
     const {
         gallery,
-        defaultDisplayType
+        defaultDisplayType,
+        loading,
+        onLoadMoreData,
+        renderFile,
+        pagination
     } = props;
-
+    const {page, totalPages} = pagination;
     const [displayType, setDisplayType] = useState(defaultDisplayType || 'thumbnails');
     const [viewportHeight, setViewportHeight] = useState(100);
     const [thumbSize, setThumbSize] = useState(200);
@@ -42,11 +46,16 @@ const MediaSlide = (props) => {
     const [viewportWidth, setViewportWidth] = useState(100);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [lastElement, setLastElement] = useState(null);
+    const [fileBuffer1, setFileBuffer1] = useState(null);
+    const [fileBuffer2, setFileBuffer2] = useState(null);
     const containerDiv = useRef();
     const portalDiv = useRef();
     const loadMoreRef = useRef();
     const doubleBuffer1 = useRef();
     const doubleBuffer2 = useRef();
+    const fileDoubleBuffer1 = useRef();
+    const fileDoubleBuffer2 = useRef();
     const stageHeight = displayType=='slide'?(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75):0;
     let items, itemHTML;
     let useThumbSize = thumbSize;
@@ -78,29 +87,58 @@ const MediaSlide = (props) => {
             }
         }
     }
-    useEffect(() => { 
 
-    },[selectedItem]);
     const flipDoubleBuffer = (i) => { 
         if (currentDoubleBuffer==1) { 
+            
             const l = ()=> {  
                 doubleBuffer1.current.style.opacity=1;
                 doubleBuffer2.current.style.opacity=0;
+                fileDoubleBuffer2.current.style.opacity=0;
+                fileDoubleBuffer1.current.style.opacity=0;
                 setCurrentDoubleBuffer(2);
                 doubleBuffer1.current.removeEventListener('load',l);
             }
+            const f = () =>  {
+                fileDoubleBuffer1.current.style.opacity=1;
+                fileDoubleBuffer2.current.style.opacity=0;
+                doubleBuffer2.current.style.opacity=0;
+                doubleBuffer1.current.style.opacity=0;
+                setCurrentDoubleBuffer(2);
+            }
             doubleBuffer1.current.addEventListener('load',l);
-            doubleBuffer1.current.src=i.full;
+            console.log(i);
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType=='text/html') { 
+                setFileBuffer1(renderFile(i,f));
+            } else { 
+                doubleBuffer1.current.src=i.full;
+            }
             
-        } else { 
+            
+        } else {
+            
             const l = ()=> {
                 doubleBuffer2.current.style.opacity=1;
                 doubleBuffer1.current.style.opacity=0;
+                fileDoubleBuffer1.current.style.opacity=0;
+                fileDoubleBuffer2.current.style.opacity=0;
                 setCurrentDoubleBuffer(1);
                 doubleBuffer2.current.removeEventListener('load', l);
             }
+            const f = () => {
+                fileDoubleBuffer2.current.style.opacity=1;
+                fileDoubleBuffer1.current.style.opacity=0;
+                doubleBuffer1.current.style.opacity=0;
+                doubleBuffer2.current.style.opacity=0;
+                setCurrentDoubleBuffer(1);
+            }
             doubleBuffer2.current.addEventListener('load', l);
-            doubleBuffer2.current.src=i.full;
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType=='text/html') { 
+                console.log(i.metadata.files);
+                setFileBuffer2(renderFile(i,f));
+            } else { 
+                doubleBuffer2.current.src=i.full;
+            }
             
         }
         
@@ -110,13 +148,38 @@ const MediaSlide = (props) => {
         if (gallery.length<1) { 
             items=<h1>Not found</h1>
         } else { 
-            items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}<li ref={loadMoreRef}>Loading...</li></ul>
+            const lElement=<li ref={loadMoreRef}>Loading...</li>
+            //setLastElement(lElement);
+            items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
     } else { 
         items = <h1>Loading</h1>
     }
     
     useEffect(() => {
+
+        const intersectionObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+              async function fetchMorePosts() {
+                
+                console.log('Fetch More');
+                console.log(onLoadMoreData);
+                console.log(loading);
+                if (page<totalPages && !loading) { 
+                    onLoadMoreData(pagination);
+                }
+              }
+              fetchMorePosts();
+            }
+          });
+          if (loadMoreRef.current) { 
+            intersectionObserver.observe(loadMoreRef.current);
+          }
+        return () => { 
+            intersectionObserver.disconnect();
+        }
+    },[loadMoreRef.current, page, loading]);
+    useEffect(()=> { 
         const resizeObserver = new ResizeObserver((event) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
@@ -125,7 +188,7 @@ const MediaSlide = (props) => {
         return () => { 
             resizeObserver.disconnect();
         }
-    },[]);
+    },[])
 
     const displayTypeChange = (e) => { 
         setDisplayType(e.target.value)
@@ -188,15 +251,19 @@ const MediaSlide = (props) => {
                 </div>
                 </label>
             </nav>
-            <section className={styles['mediaslide-slide-stage']} style={{height:stageHeight}}>
-            <div className={styles['mediaslide-double-buffer-container']}>
+            <section className={styles['mediaslide-slide-stage']} style={{height:stageHeight, opacity:displayType=='slide'?'1':'0'}}>
+            <div className={styles['mediaslide-double-buffer-container']} style={{opacity: '1'}}>
                 <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer1} height={stageHeight} />
                 <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer2} height={stageHeight} />
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth-10}} src="" ref={fileDoubleBuffer1}>{fileBuffer1}</div>
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth-10}} src="" ref={fileDoubleBuffer2}>{fileBuffer2}</div>
             </div>
             </section>
+            
             <section ref={portalDiv} className={styles['mediaslide-portal']} style={{height: displayType=='slide'?(viewportHeight-navbarHeight)*0.25:viewportHeight-navbarHeight}} onWheel={slideScroll}>
             {items}
             </section>
+            
         </div>
         </div>
     );
@@ -204,6 +271,10 @@ const MediaSlide = (props) => {
 
 MediaSlide.propTypes = {
    gallery: PropTypes.array.isRequired,
-   defaultDisplayType: PropTypes.string
+   loading: PropTypes.bool.isRequired,
+   defaultDisplayType: PropTypes.string,
+   onLoadMoreData: PropTypes.func.isRequired,
+   pagination: PropTypes.object.isRequired,
+   renderFile: PropTypes.func.isRequired
 };
 export default MediaSlide;
