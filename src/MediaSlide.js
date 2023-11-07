@@ -8,23 +8,23 @@ import * as React from 'react';
 
 const listItemHTML = (click) => { 
     return (item) => { 
-        return <li onClick={click(item)}><img src={item.tiny} width="32" /> {item.title}</li>
+        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.tiny} width="32" /> {item.title}</li>
     }
 }
 const detailsItemHTML = (click) => { 
     return (item) => { 
-        return <li onClick={click(item)}><img src={item.tiny} width="64" /> {item.title}</li>
+        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.tiny} width="64" /> {item.title}</li>
     }
 }
 const thumbnailsItemHTML = (click,ts) => { 
     return (item) => { 
-        return <li onClick={click(item)}><img src={item.thumb} width={ts} /><br />{item.title}</li>
+        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} width={ts} /><br />{item.title}</li>
     }
 }
 const slideItemHTML = (click,ts) => { 
     return (item) => { 
         // The 60 below is the number of pixels we reserve in the slide bar for the label
-        return <li onClick={click(item)}><img src={item.thumb} height={ts-60} /><br />{item.title}</li>
+        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} height={ts-60} /><br />{item.title}</li>
     }
 }
 
@@ -56,7 +56,8 @@ const MediaSlide = (props) => {
     const doubleBuffer2 = useRef();
     const fileDoubleBuffer1 = useRef();
     const fileDoubleBuffer2 = useRef();
-    const stageHeight = displayType=='slide'?(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75):0;
+    const sliderRef = useRef();
+    const stageHeight = (isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75)
     let items, itemHTML;
     let useThumbSize = thumbSize;
 
@@ -77,19 +78,30 @@ const MediaSlide = (props) => {
     }
     const itemClick = (i) => { 
         return (e) => { 
-            if (selectedItem!=i) { 
+            
+            if (selectedItem!=i || e.detail > 1) { 
+                if (selectedItem) { 
+                    sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]').classList.remove(styles['mediaslide-item-selected'])
+                }
                 setSelectedItem(i);
-                if (displayType!='slide') { 
+                
+                let dt = displayType;
+                console.log(displayType, e.detail);
+                if (displayType!='slide' && e.detail > 1) { 
+                    dt='slide';
                     setDisplayType('slide');
                 } 
+                sliderRef.current.querySelector('li[data-id="'+i.id+'"]').classList.add(styles['mediaslide-item-selected'])
+                if (displayType=='slide' || e.detail > 1) {
+                    flipDoubleBuffer(i,dt);
+                }
                 
-                flipDoubleBuffer(i);
             }
         }
     }
 
-    const flipDoubleBuffer = (i) => { 
-        
+    const flipDoubleBuffer = (i, dt) => { 
+        if (dt=='slide') setTimeout(()=>sliderRef.current.querySelector('li[data-id="'+i.id+'"]').scrollIntoView({behavior: 'smooth', block:'end', inline: 'center'}),100);
         if (currentDoubleBuffer==1) { 
             const l = ()=> {  
                 doubleBuffer1.current.style.opacity=1;
@@ -103,7 +115,7 @@ const MediaSlide = (props) => {
             const r = () => { 
                 window.postMessage({request:'slideReady'},'*')
             }
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e) => { 
                     if (e.data.request=='slideReady') { 
                         fileDoubleBuffer1.current.style.opacity=1;
@@ -111,11 +123,16 @@ const MediaSlide = (props) => {
                         doubleBuffer2.current.style.opacity=0;
                         doubleBuffer1.current.style.opacity=0;
                         setCurrentDoubleBuffer(2);
+                        fileDoubleBuffer2.current.style.filter='none'
                         window.removeEventListener('message',messageHandler);
                     }
                 }
+                
+                fileDoubleBuffer2.current.style.filter='blur(7px) brightness(70%)'
+                fileDoubleBuffer2.current.style.zIndex=1;
+                fileDoubleBuffer1.current.style.zIndex=2;
                 window.addEventListener('message', messageHandler);
-                renderFile(i,r).then((buf) => { 
+                renderFile(i,r,'100%',stageHeight).then((buf) => { 
                     setFileBuffer1(buf);
                 })   
             } else { 
@@ -135,7 +152,7 @@ const MediaSlide = (props) => {
             const r = () => { 
                 window.postMessage({request:'slideReady'},'*')
             }
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0].mediaType.substring(0,9)=='text/html') { 
+            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e)=>{ 
                     if (e.data.request=='slideReady') { 
                         fileDoubleBuffer2.current.style.opacity=1;
@@ -143,11 +160,15 @@ const MediaSlide = (props) => {
                         doubleBuffer1.current.style.opacity=0;
                         doubleBuffer2.current.style.opacity=0;
                         setCurrentDoubleBuffer(1);
+                        fileDoubleBuffer1.current.style.filter='none'
                         window.removeEventListener('message',messageHandler)
                     }
                 }
+                fileDoubleBuffer1.current.style.filter='blur(7px) brightness(70%)'
+                fileDoubleBuffer2.current.style.zIndex=2;
+                fileDoubleBuffer1.current.style.zIndex=1;
                 window.addEventListener('message',messageHandler);
-                renderFile(i,r).then((buf)=> { 
+                renderFile(i,r,'100%',stageHeight).then((buf)=> { 
                     setFileBuffer2(buf);
                 })
             } else { 
@@ -165,13 +186,14 @@ const MediaSlide = (props) => {
             if (page<totalPages){
                 lElement=<li ref={loadMoreRef}>Loading...</li>
             }
-            items = <ul className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
+            items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
     } else { 
         items = <h1>Loading</h1>
     }
     
     useEffect(() => {
+        
         const intersectionObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
               async function fetchMorePosts() {
@@ -201,7 +223,12 @@ const MediaSlide = (props) => {
     },[])
 
     const displayTypeChange = (e) => { 
-        setDisplayType(e.target.value)
+        setDisplayType(e.target.value);
+        itemClick(selectedItem)({detail: 1});
+        if (e.target.value!='slide') { 
+            setFileBuffer1('');
+            setFileBuffer2('');
+        }
     }
     const thumbSizeSlide = (s) => { 
         setThumbSize(s);
@@ -220,11 +247,12 @@ const MediaSlide = (props) => {
         }
     }
     const slideScroll = (e) => { 
-        if (displayType!='slide') return;
+        if (displayType!='slide' && displayType!='list') return;
         const container = portalDiv.current;
-        const scrollAmount = e.deltaY/2;
+        const scrollAmount = e.deltaY/1.5;
         //container.style.transform='translateX('+(container.scrollLeft + scrollAmount)+'px)';
         //return;
+
         container.scrollTo({
           top: 0,
           left: container.scrollLeft + scrollAmount,
@@ -261,12 +289,12 @@ const MediaSlide = (props) => {
                 </div>
                 </label>
             </nav>
-            <section className={styles['mediaslide-slide-stage']} style={{height:stageHeight, opacity:displayType=='slide'?'1':'0'}}>
+            <section className={styles['mediaslide-slide-stage']} style={{height:displayType=='slide'?stageHeight:0, opacity:displayType=='slide'?'1':'0'}}>
             <div className={styles['mediaslide-double-buffer-container']} style={{opacity: '1'}}>
-                <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer1} height={stageHeight} />
-                <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer2} height={stageHeight} />
-                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth}} src="" ref={fileDoubleBuffer1}>{fileBuffer1}</div>
-                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:stageHeight, width: viewportWidth}} src="" ref={fileDoubleBuffer2}>{fileBuffer2}</div>
+                <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer1} height={displayType=='slide'?stageHeight:0} />
+                <img className={styles['mediaslide-double-buffer']} style={{opacity:0}} src="" ref={doubleBuffer2} height={displayType=='slide'?stageHeight:0} />
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:displayType=='slide'?stageHeight:0, width: viewportWidth}} src="" ref={fileDoubleBuffer1}>{fileBuffer1}</div>
+                <div className={styles['mediaslide-double-buffer']} style={{opacity:0, height:displayType=='slide'?stageHeight:0, width: viewportWidth}} src="" ref={fileDoubleBuffer2}>{fileBuffer2}</div>
             </div>
             </section>
             
