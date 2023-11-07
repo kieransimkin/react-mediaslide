@@ -24,7 +24,7 @@ const thumbnailsItemHTML = (click,ts) => {
 const slideItemHTML = (click,ts) => { 
     return (item) => { 
         // The 60 below is the number of pixels we reserve in the slide bar for the label
-        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} height={ts-60} /><br />{item.title}</li>
+        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} height={ts-80} /><br />{item.title}</li>
     }
 }
 
@@ -35,8 +35,10 @@ const MediaSlide = (props) => {
         loading,
         onLoadMoreData,
         renderFile,
-        pagination
+        pagination,
+        renderBigInfo
     } = props;
+    const leftbarWidthRatio = 0.4;
     const {page, totalPages} = pagination;
     const [displayType, setDisplayType] = useState(defaultDisplayType || 'thumbnails');
     const [viewportHeight, setViewportHeight] = useState(100);
@@ -44,11 +46,15 @@ const MediaSlide = (props) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [navbarHeight, setNavbarHeight] = useState(60);
     const [viewportWidth, setViewportWidth] = useState(100);
+    const [leftbarWidth, setLeftbarWidth] = useState(0);
+    const [leftbarOpen, setLeftbarOpen] = useState(false);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [lastElement, setLastElement] = useState(null);
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
+    const [bigInfo, setBigInfo] = useState(null);
+    const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(null)
     const containerDiv = useRef();
     const portalDiv = useRef();
     const loadMoreRef = useRef();
@@ -57,9 +63,11 @@ const MediaSlide = (props) => {
     const fileDoubleBuffer1 = useRef();
     const fileDoubleBuffer2 = useRef();
     const sliderRef = useRef();
+    const leftBar = useRef();
     const stageHeight = (isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75)
     let items, itemHTML;
     let useThumbSize = thumbSize;
+
 
     switch (displayType) { 
         case 'list': 
@@ -79,20 +87,31 @@ const MediaSlide = (props) => {
     const itemClick = (i, newDisplayType=null) => { 
         return (e) => { 
             if (!newDisplayType) newDisplayType=displayType;
+            if (!i) return;
+            
             if (selectedItem!=i || e.detail > 1 || e.detail < 1) { 
                 if (selectedItem) { 
-                    sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]').classList.remove(styles['mediaslide-item-selected'])
+                    sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.classList?.remove(styles['mediaslide-item-selected'])
                 }
                 setSelectedItem(i);
+                renderBigInfo(i).then((buf) => { 
+                    setBigInfo(buf);
+                })
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
                     setDisplayType('slide');
                 }
-                sliderRef.current.querySelector('li[data-id="'+i.id+'"]').classList.add(styles['mediaslide-item-selected'])
+                if (dt!='slide' && !leftbarOpen && e.detail > 0) { 
+                    setLeftbarWidth(defaultLeftbarWidth || 200);
+                    setLeftbarOpen(true);
+                } else if (dt=='slide' && leftbarOpen && e.detail > 0) { 
+                    setLeftbarWidth(0);
+                }
+                sliderRef.current.querySelector('li[data-id="'+i.id+'"]')?.classList?.add(styles['mediaslide-item-selected'])
                 if (dt == 'slide' || e.detail < 1) { 
                     setTimeout(()=>{
-                        sliderRef.current.querySelector('li[data-id="'+i.id+'"]').scrollIntoView({behavior: 'smooth', block:'end', inline: 'center'}); 
+                        sliderRef.current.querySelector('li[data-id="'+i.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
                     },100);
                 }
                 if (dt=='slide' || e.detail > 1) {
@@ -201,7 +220,7 @@ const MediaSlide = (props) => {
         const intersectionObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
               async function fetchMorePosts() {
-                if (page<totalPages && !loading) { 
+                if (page<totalPages) { 
                     onLoadMoreData(pagination);
                 }
               }
@@ -219,6 +238,7 @@ const MediaSlide = (props) => {
         const resizeObserver = new ResizeObserver((event) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
+            setDefaultLeftbarWidth(event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio);
         });
         resizeObserver.observe(containerDiv.current);
         
@@ -236,18 +256,22 @@ const MediaSlide = (props) => {
     },[displayType]);
 
     const displayTypeChange = (e) => { 
+        //if (e.target.value=='slide') setLeftbarWidth(0);
         setDisplayType(e.target.value);
-        itemClick(selectedItem)({detail: 1});
+        //itemClick(selectedItem)({detail: 1});
         if (e.target.value!='slide') { 
             setFileBuffer1('');
             setFileBuffer2('');
+            if (leftbarOpen && leftbarWidth==0) { 
+                setLeftbarWidth(defaultLeftbarWidth || 200);
+            }
             setTimeout(() => { 
                 itemClick(selectedItem, e.target.value)({detail:0});
-            },100);
+            },10);
         } else { 
             setTimeout(() => { 
                 itemClick(selectedItem, e.target.value)({detail:2});
-            },100);
+            },10);
         }
     }
     const thumbSizeSlide = (s) => { 
@@ -297,7 +321,9 @@ const MediaSlide = (props) => {
     }
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
-        
+        <div className={styles['mediaslide-leftbar']} ref={leftBar} style={{width: leftbarWidth}}>
+            {bigInfo}
+        </div>
         <div className={styles.mediaslide+' '+styles['mediaslide-'+displayType]} style={{height: viewportHeight}}>
             <nav className={styles['mediaslide-nav']} style={{height: navbarHeight}}>
                 <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="list" onChange={displayTypeChange} checked={displayType=='list'} />List</label>
@@ -349,6 +375,7 @@ MediaSlide.propTypes = {
    defaultDisplayType: PropTypes.string,
    onLoadMoreData: PropTypes.func.isRequired,
    pagination: PropTypes.object.isRequired,
-   renderFile: PropTypes.func.isRequired
+   renderFile: PropTypes.func.isRequired,
+   renderBigInfo: PropTypes.func.isRequired
 };
 export default MediaSlide;
