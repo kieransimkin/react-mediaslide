@@ -11,10 +11,14 @@
     width:100%;
 }
 .mediaslide-leftbar { 
-    transition: width 0.4s;
-    overflow-x: clip;
-    overflow-y: clip;
+    transition: left 0.4s, width 0s;
+    overflow-x: hidden;
+    overflow-y: hidden;
     height: 100%;
+    position: relative;
+}
+.mediaslide-leftbar-opened { 
+    transition: left 0.4s, width 0.4s;
 }
 nav.mediaslide-nav { 
     display: flex;

@@ -48,13 +48,16 @@ const MediaSlide = (props) => {
     const [viewportWidth, setViewportWidth] = useState(100);
     const [leftbarWidth, setLeftbarWidth] = useState(0);
     const [leftbarOpen, setLeftbarOpen] = useState(false);
+    const [leftbarOpened, setLeftbarOpened] = useState(false);
+    const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(null);
+    const [currentLeftbarWidth, setCurrentLeftbarWidth] = useState(null);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [lastElement, setLastElement] = useState(null);
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
     const [bigInfo, setBigInfo] = useState(null);
-    const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(null)
+    
     const containerDiv = useRef();
     const portalDiv = useRef();
     const loadMoreRef = useRef();
@@ -94,9 +97,11 @@ const MediaSlide = (props) => {
                     sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.classList?.remove(styles['mediaslide-item-selected'])
                 }
                 setSelectedItem(i);
-                renderBigInfo(i).then((buf) => { 
-                    setBigInfo(buf);
-                })
+                
+                    renderBigInfo(i).then((buf) => { 
+                        setBigInfo(buf);
+                    })
+                 
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
@@ -104,9 +109,14 @@ const MediaSlide = (props) => {
                 }
                 if (dt!='slide' && !leftbarOpen && e.detail > 0) { 
                     setLeftbarWidth(defaultLeftbarWidth || 200);
+                    setCurrentLeftbarWidth(defaultLeftbarWidth || 200);
                     setLeftbarOpen(true);
+                    setLeftbarOpened(false);
+                    
                 } else if (dt=='slide' && leftbarOpen && e.detail > 0) { 
                     setLeftbarWidth(0);
+                    setLeftbarOpened(true);
+                    
                 }
                 sliderRef.current.querySelector('li[data-id="'+i.id+'"]')?.classList?.add(styles['mediaslide-item-selected'])
                 if (dt == 'slide' || e.detail < 1) { 
@@ -233,7 +243,7 @@ const MediaSlide = (props) => {
         return () => { 
             intersectionObserver.disconnect();
         }
-    },[loadMoreRef.current, page, loading]);
+    },[loadMoreRef.current, gallery, page, totalPages, loading]);
     useEffect(()=> { 
         const resizeObserver = new ResizeObserver((event) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
@@ -256,18 +266,22 @@ const MediaSlide = (props) => {
     },[displayType]);
 
     const displayTypeChange = (e) => { 
-        //if (e.target.value=='slide') setLeftbarWidth(0);
         setDisplayType(e.target.value);
-        //itemClick(selectedItem)({detail: 1});
         if (e.target.value!='slide') { 
             setFileBuffer1('');
             setFileBuffer2('');
+            let delay = 10;
+            let clickNum = 0;
             if (leftbarOpen && leftbarWidth==0) { 
+                delay=400;
+                clickNum = 0;
                 setLeftbarWidth(defaultLeftbarWidth || 200);
+                setCurrentLeftbarWidth(defaultLeftbarWidth || 200);
+                setBigInfo('')
             }
             setTimeout(() => { 
-                itemClick(selectedItem, e.target.value)({detail:0});
-            },10);
+                itemClick(selectedItem, e.target.value)({detail:clickNum});
+            },delay);
         } else { 
             setTimeout(() => { 
                 itemClick(selectedItem, e.target.value)({detail:2});
@@ -321,7 +335,7 @@ const MediaSlide = (props) => {
     }
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
-        <div className={styles['mediaslide-leftbar']} ref={leftBar} style={{width: leftbarWidth}}>
+        <div className={styles['mediaslide-leftbar']+(leftbarOpened?' '+styles['mediaslide-leftbar-opened']:'')} ref={leftBar} style={{width: leftbarWidth, left:-(currentLeftbarWidth-leftbarWidth)}}>
             {bigInfo}
         </div>
         <div className={styles.mediaslide+' '+styles['mediaslide-'+displayType]} style={{height: viewportHeight}}>
