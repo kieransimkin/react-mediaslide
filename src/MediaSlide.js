@@ -76,23 +76,26 @@ const MediaSlide = (props) => {
             useThumbSize=(viewportHeight-navbarHeight)*0.25;
             break;
     }
-    const itemClick = (i) => { 
+    const itemClick = (i, newDisplayType=null) => { 
         return (e) => { 
-            
-            if (selectedItem!=i || e.detail > 1) { 
+            if (!newDisplayType) newDisplayType=displayType;
+            if (selectedItem!=i || e.detail > 1 || e.detail < 1) { 
                 if (selectedItem) { 
                     sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]').classList.remove(styles['mediaslide-item-selected'])
                 }
                 setSelectedItem(i);
-                
-                let dt = displayType;
-                console.log(displayType, e.detail);
+                let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
                     setDisplayType('slide');
-                } 
+                }
                 sliderRef.current.querySelector('li[data-id="'+i.id+'"]').classList.add(styles['mediaslide-item-selected'])
-                if (displayType=='slide' || e.detail > 1) {
+                if (dt == 'slide' || e.detail < 1) { 
+                    setTimeout(()=>{
+                        sliderRef.current.querySelector('li[data-id="'+i.id+'"]').scrollIntoView({behavior: 'smooth', block:'end', inline: 'center'}); 
+                    },100);
+                }
+                if (dt=='slide' || e.detail > 1) {
                     flipDoubleBuffer(i,dt);
                 }
                 
@@ -101,7 +104,8 @@ const MediaSlide = (props) => {
     }
 
     const flipDoubleBuffer = (i, dt) => { 
-        if (dt=='slide') setTimeout(()=>sliderRef.current.querySelector('li[data-id="'+i.id+'"]').scrollIntoView({behavior: 'smooth', block:'end', inline: 'center'}),100);
+        
+
         if (currentDoubleBuffer==1) { 
             const l = ()=> {  
                 doubleBuffer1.current.style.opacity=1;
@@ -217,10 +221,19 @@ const MediaSlide = (props) => {
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
         });
         resizeObserver.observe(containerDiv.current);
+        
         return () => { 
             resizeObserver.disconnect();
+            
         }
     },[])
+    useEffect(() => { 
+        const listener = keyDown(sliderRef, displayType);
+        window.addEventListener('keydown', listener)
+        return () => { 
+            window.removeEventListener('keydown', listener);
+        }
+    },[displayType]);
 
     const displayTypeChange = (e) => { 
         setDisplayType(e.target.value);
@@ -228,6 +241,13 @@ const MediaSlide = (props) => {
         if (e.target.value!='slide') { 
             setFileBuffer1('');
             setFileBuffer2('');
+            setTimeout(() => { 
+                itemClick(selectedItem, e.target.value)({detail:0});
+            },100);
+        } else { 
+            setTimeout(() => { 
+                itemClick(selectedItem, e.target.value)({detail:2});
+            },100);
         }
     }
     const thumbSizeSlide = (s) => { 
@@ -250,14 +270,30 @@ const MediaSlide = (props) => {
         if (displayType!='slide' && displayType!='list') return;
         const container = portalDiv.current;
         const scrollAmount = e.deltaY/1.5;
-        //container.style.transform='translateX('+(container.scrollLeft + scrollAmount)+'px)';
-        //return;
-
         container.scrollTo({
           top: 0,
           left: container.scrollLeft + scrollAmount,
           behavior: 'instant'
         });
+    }
+    const previous = (sRef, displayType) => { 
+        sRef.current.querySelector('.'+styles['mediaslide-item-selected'])?.previousElementSibling.click();
+    }
+    const next = (sRef, displayType) => { 
+        sRef.current.querySelector('.'+styles['mediaslide-item-selected'])?.nextElementSibling.click();
+    }
+    const keyDown = (sRef) => { 
+        return (e) => { 
+            switch (e.key) { 
+                case 'ArrowLeft':
+                    previous(sRef);
+                break;
+                case 'ArrowRight': 
+                    next(sRef);
+                break;
+            }
+            e.preventDefault();
+        }
     }
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
