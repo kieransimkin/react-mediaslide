@@ -49,8 +49,8 @@ const MediaSlide = (props) => {
     const [leftbarWidth, setLeftbarWidth] = useState(0);
     const [leftbarOpen, setLeftbarOpen] = useState(false);
     const [leftbarOpened, setLeftbarOpened] = useState(false);
-    const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(null);
-    const [currentLeftbarWidth, setCurrentLeftbarWidth] = useState(null);
+    const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(0);
+    const [currentLeftbarWidth, setCurrentLeftbarWidth] = useState(0);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [lastElement, setLastElement] = useState(null);
@@ -106,15 +106,18 @@ const MediaSlide = (props) => {
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
                     setDisplayType('slide');
+                    setCurrentLeftbarWidth(defaultLeftbarWidth)
                 }
                 if (dt!='slide' && !leftbarOpen && e.detail > 0) { 
                     setLeftbarWidth(defaultLeftbarWidth || 200);
                     setCurrentLeftbarWidth(defaultLeftbarWidth || 200);
+                    setLeftbarWidth(defaultLeftbarWidth || 200);
                     setLeftbarOpen(true);
                     setLeftbarOpened(false);
                     
                 } else if (dt=='slide' && leftbarOpen && e.detail > 0) { 
-                    setLeftbarWidth(0);
+                    //setLeftbarWidth(0);
+                    
                     setLeftbarOpened(true);
                     
                 }
@@ -249,6 +252,7 @@ const MediaSlide = (props) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
             setDefaultLeftbarWidth(event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio);
+            setLeftbarWidth(event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio);
         });
         resizeObserver.observe(containerDiv.current);
         
@@ -275,16 +279,30 @@ const MediaSlide = (props) => {
             if (leftbarOpen && leftbarWidth==0) { 
                 delay=400;
                 clickNum = 0;
-                setLeftbarWidth(defaultLeftbarWidth || 200);
-                setCurrentLeftbarWidth(defaultLeftbarWidth || 200);
+                ;
                 setBigInfo('')
+                setLeftbarWidth(defaultLeftbarWidth)
+                console.log(1);
+            } else if (leftbarOpen) { 
+                console.log(2);
+                setCurrentLeftbarWidth(defaultLeftbarWidth);
+                setLeftbarWidth(defaultLeftbarWidth)
             }
+            
+            
             setTimeout(() => { 
+                
                 itemClick(selectedItem, e.target.value)({detail:clickNum});
             },delay);
         } else { 
+            
+            setCurrentLeftbarWidth(0)
+            setLeftbarWidth(defaultLeftbarWidth);
+            
+            
             setTimeout(() => { 
-                itemClick(selectedItem, e.target.value)({detail:2});
+                
+                itemClick(selectedItem, e.target.value)({detail:0});
             },10);
         }
     }
@@ -333,9 +351,11 @@ const MediaSlide = (props) => {
             e.preventDefault();
         }
     }
+    console.log(leftbarOpened)
+    console.log(leftbarWidth, currentLeftbarWidth, defaultLeftbarWidth)
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
-        <div className={styles['mediaslide-leftbar']+(leftbarOpened?' '+styles['mediaslide-leftbar-opened']:'')} ref={leftBar} style={{width: leftbarWidth, left:-(currentLeftbarWidth-leftbarWidth)}}>
+        <div className={styles['mediaslide-leftbar']+(leftbarOpened?' '+styles['mediaslide-leftbar-opened']:'')} ref={leftBar} style={{width: leftbarWidth, left:-(leftbarWidth-currentLeftbarWidth)}}>
             {bigInfo}
         </div>
         <div className={styles.mediaslide+' '+styles['mediaslide-'+displayType]} style={{height: viewportHeight}}>
@@ -374,7 +394,7 @@ const MediaSlide = (props) => {
             </div>
             </section>
             
-            <section ref={portalDiv} className={styles['mediaslide-portal']} style={{height: displayType=='slide'?(viewportHeight-navbarHeight)*0.25:viewportHeight-navbarHeight}} onWheel={slideScroll}>
+            <section ref={portalDiv} className={styles['mediaslide-portal']} style={{width: viewportWidth-currentLeftbarWidth, left:currentLeftbarWidth, height: displayType=='slide'?(viewportHeight-navbarHeight)*0.25:viewportHeight-navbarHeight}} onWheel={slideScroll}>
             {items}
             </section>
             

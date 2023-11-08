@@ -15,7 +15,7 @@
     overflow-x: hidden;
     overflow-y: hidden;
     height: 100%;
-    position: relative;
+    position: absolute;
 }
 .mediaslide-leftbar-opened { 
     transition: left 0.4s, width 0.4s;
@@ -226,7 +226,9 @@ ul.mediaslide-list-ul > li > img:hover {
     overflow-y: hidden;
 }
 .mediaslide-portal { 
-    transition: height 0.5s;
+    transition: height 0.5s, width 0.5s, left 0.5s;
+    width: 100%;
+    position: absolute;
 }
 ul.mediaslide-slide-ul { 
     position: relative;
