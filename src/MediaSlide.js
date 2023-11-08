@@ -39,7 +39,9 @@ const MediaSlide = (props) => {
         renderBigInfo
     } = props;
     const leftbarWidthRatio = 0.4;
-    const {page, totalPages} = pagination;
+    let page = 0,totalPages = 0;
+    if (pagination?.page) page=pagination.page;
+    if (pagination?.totalPages) totalPages=pagination.totalPages;
     const [displayType, setDisplayType] = useState(defaultDisplayType || 'thumbnails');
     const [viewportHeight, setViewportHeight] = useState(100);
     const [thumbSize, setThumbSize] = useState(200);
