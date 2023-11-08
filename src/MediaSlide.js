@@ -105,7 +105,9 @@ const MediaSlide = (props) => {
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
-                    setDisplayType('slide');
+                    setDisplayType('slide');       
+                    setLeftbarWidth(0);
+                    setLeftbarOpened(true);
                 }
                 if (dt!='slide' && !leftbarOpen && e.detail > 0) { 
                     setLeftbarWidth(defaultLeftbarWidth || 200);
@@ -283,6 +285,7 @@ const MediaSlide = (props) => {
                 itemClick(selectedItem, e.target.value)({detail:clickNum});
             },delay);
         } else { 
+            setCurrentLeftbarWidth(0)
             setTimeout(() => { 
                 itemClick(selectedItem, e.target.value)({detail:2});
             },10);
