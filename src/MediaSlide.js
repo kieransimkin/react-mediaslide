@@ -39,7 +39,10 @@ const MediaSlide = (props) => {
         renderBigInfo
     } = props;
     const leftbarWidthRatio = 0.4;
-    let page = 0,totalPages = 0;
+    let page = 0,totalPages = 0, loadingIndicator=props?.loadingIndicator;
+    if (!loadingIndicator) { 
+        loadingIndicator="Loading..."
+    };
     if (pagination?.page) page=pagination.page;
     if (pagination?.totalPages) totalPages=pagination.totalPages;
     const [displayType, setDisplayType] = useState(defaultDisplayType || 'thumbnails');
@@ -223,12 +226,12 @@ const MediaSlide = (props) => {
         } else { 
             let lElement;
             if (page<totalPages){
-                lElement=<li ref={loadMoreRef}>Loading...</li>
+                lElement=<li ref={loadMoreRef}>{loadingIndicator}</li>
             }
             items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
     } else { 
-        items = <h1>Loading</h1>
+        items = <h1>{loadingIndicator}</h1>
     }
     
     useEffect(() => {
@@ -409,6 +412,7 @@ MediaSlide.propTypes = {
    onLoadMoreData: PropTypes.func.isRequired,
    pagination: PropTypes.object.isRequired,
    renderFile: PropTypes.func.isRequired,
-   renderBigInfo: PropTypes.func.isRequired
+   renderBigInfo: PropTypes.func.isRequired,
+   loadingIndicator: PropTypes.object
 };
 export default MediaSlide;
