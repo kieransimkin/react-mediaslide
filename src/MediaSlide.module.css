@@ -45,6 +45,7 @@ nav.mediaslide-nav {
     border-bottom: 1px solid rgba(0,0,0,0.4);
     flex-direction: row;
     justify-content: center;
+    transition: height 0.5s;
 }
 nav.mediaslide-nav > .mediaslide-nav-displaytype { 
     display: inline;
@@ -166,6 +167,9 @@ ul.mediaslide-thumbnails-ul {
     background-color: rgba(255,255,255,0);
     transition: background-color 1s, border-radius 0.5s;
 } 
+ul.mediaslide-thumbnails-ul > li > a { 
+    pointer-events: none;
+}
 .mediaslide-thumbnails-ul > li > img {
     border-radius: 20px;
     transition: border-radius 0.4s;
@@ -209,7 +213,6 @@ ul.mediaslide-list-ul > li {
     margin-left:1em;
     margin-right:1em;
     cursor: pointer;
-    
     padding-left:1em;
     padding-right:1em;
     padding-top:0.05em;
@@ -218,6 +221,9 @@ ul.mediaslide-list-ul > li {
     text-align:center;
     background-color: rgba(255,255,255,0);
     transition: background-color 0.3s, border-radius 0.5s;
+}
+ul.mediaslide-list-ul > li > a { 
+    pointer-events: none;
 }
 .mediaslide-list-ul > li > img {
     border-radius: 0px;
@@ -273,6 +279,9 @@ ul.mediaslide-slide-ul {
     background-color: rgba(255,255,255,0);
     transition: background-color 1s, border-radius 0.5s;
 } 
+ul.mediaslide-slide-ul > li > a { 
+    pointer-events: none;
+}
 .mediaslide-slide-ul > li > img {
     border-radius: 7px;
     transition: border-radius 0.4s;
@@ -323,6 +332,9 @@ ul.mediaslide-details-ul > li {
     border-radius: 0px;
     background-color: rgba(255,255,255,0);
     transition: background-color 0.3s, border-radius 0.5s;
+}
+ul.mediaslide-details-ul > li > a { 
+    pointer-events: none;
 }
 ul.mediaslide-details-ul > li > img {
     border-radius: 0px;

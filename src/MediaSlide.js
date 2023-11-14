@@ -88,8 +88,9 @@ const MediaSlide = (props) => {
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
     const [bigInfo, setBigInfo] = useState(null);
-    const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
     
+    const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
+    let navbarTimer=null;
     
     
     
@@ -102,7 +103,6 @@ const MediaSlide = (props) => {
     const fileDoubleBuffer2 = useRef();
     const sliderRef = useRef();
     const leftBar = useRef();
-    
     let items, itemHTML;
     let useThumbSize = thumbSize;
 
@@ -121,6 +121,21 @@ const MediaSlide = (props) => {
             itemHTML=slideItemHTML;
             useThumbSize=stageHeight==0?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.25;
             break;
+    }
+    const mouseMove = (e) => { 
+        
+        
+        if (e.clientY<60) { 
+            
+            if (displayType!='slide') { 
+            clearTimeout(navbarTimer);
+
+            navbarTimer=setTimeout(hideNavbar,5000);
+            }
+        setNavbarHeight(defaultNavbarHidden?0:60)
+        }
+    
+
     }
     const itemClick = (i, newDisplayType=null) => { 
         return (e) => { 
@@ -141,8 +156,9 @@ const MediaSlide = (props) => {
                 if (displayType!='slide' && e.detail > 1) { 
                     dt='slide';
                     setDisplayType('slide');       
-                    setLeftbarWidth(0);
+                    //setLeftbarWidth(0);
                     setLeftbarOpened(true);
+                    setCurrentLeftbarWidth(0);
                 }
                 if (dt!='slide' && !leftbarOpen && e.detail > 0) { 
                     setLeftbarWidth(defaultLeftbarWidth || 200);
@@ -204,7 +220,7 @@ const MediaSlide = (props) => {
                 fileDoubleBuffer2.current.style.zIndex=1;
                 fileDoubleBuffer1.current.style.zIndex=2;
                 window.addEventListener('message', messageHandler);
-                renderFile(i,r,'100%',stageHeight).then((buf) => { 
+                renderFile(i,r,'100%',stageHeight,mouseMove).then((buf) => { 
                     setFileBuffer1(buf);
                 })   
             } else { 
@@ -240,7 +256,7 @@ const MediaSlide = (props) => {
                 fileDoubleBuffer2.current.style.zIndex=2;
                 fileDoubleBuffer1.current.style.zIndex=1;
                 window.addEventListener('message',messageHandler);
-                renderFile(i,r,'100%',stageHeight).then((buf)=> { 
+                renderFile(i,r,'100%',stageHeight,mouseMove).then((buf)=> { 
                     setFileBuffer2(buf);
                 })
             } else { 
@@ -283,16 +299,39 @@ const MediaSlide = (props) => {
             intersectionObserver.disconnect();
         }
     },[loadMoreRef.current, gallery, page, totalPages, loading]);
+    const hideNavbar = () => { 
+        setNavbarHeight(0);
+    }
+  
+    useEffect(() => { 
+        navbarTimer=setTimeout(hideNavbar,5000);
+        containerDiv.current.addEventListener("mousemove",mouseMove)
+        window.document.addEventListener("mousemove",mouseMove);
+        return ()=> { 
+            if (containerDiv.current) {
+                containerDiv.current.removeEventListener("mousemove",mouseMove);
+                window.document.removeEventListener("mousemove",mouseMove);
+            }
+            clearTimeout(navbarTimer);
+        }
+    },[])
     useEffect(()=> { 
+        
+        
+        
         const resizeObserver = new ResizeObserver((event) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
-            setDefaultLeftbarWidth(event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio);
-            setLeftbarWidth(event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio);
+            let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
+            if (leftbarW>600) leftbarW=600;
+
+            setDefaultLeftbarWidth(leftbarW);
+            setLeftbarWidth(leftbarW);
         });
         resizeObserver.observe(containerDiv.current);
         
         return () => { 
+            
             resizeObserver.disconnect();
             
         }
@@ -315,6 +354,7 @@ const MediaSlide = (props) => {
             if (leftbarOpen && leftbarWidth==0) { 
                 delay=400;
                 clickNum = 0;
+             
                 setBigInfo('')
                 setLeftbarWidth(defaultLeftbarWidth)
             } else if (leftbarOpen) { 
@@ -375,14 +415,15 @@ const MediaSlide = (props) => {
                     next(sRef);
                 break;
             }
-            e.preventDefault();
         }
     }
 
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
         <div className={styles['mediaslide-leftbar']+(leftbarOpened?' '+styles['mediaslide-leftbar-opened']:'')} ref={leftBar} style={{width: leftbarWidth, left:-(leftbarWidth-currentLeftbarWidth)}}>
+            <div style={{position: 'relative', top:navbarHeight}}>
             {bigInfo}
+            </div>        
         </div>
         <div className={styles.mediaslide+' '+styles['mediaslide-'+displayType]} style={{height: viewportHeight}}>
             <nav className={styles['mediaslide-nav']} style={{height: navbarHeight, visibility:navbarHeight==0?'hidden':'visible'}}>
