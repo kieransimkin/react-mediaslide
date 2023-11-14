@@ -6,39 +6,63 @@ import styles from './MediaSlide.module.css'
 import Slider from 'react-slider';
 import * as React from 'react';
 
-const listItemHTML = (click) => { 
-    return (item) => { 
-        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.tiny} width="32" /> {item.title}</li>
-    }
-}
-const detailsItemHTML = (click) => { 
-    return (item) => { 
-        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.tiny} width="64" /> {item.title}</li>
-    }
-}
-const thumbnailsItemHTML = (click,ts) => { 
-    return (item) => { 
-        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} width={ts} /><br />{item.title}</li>
-    }
-}
-const slideItemHTML = (click,ts) => { 
-    return (item) => { 
-        // The 60 below is the number of pixels we reserve in the slide bar for the label
-        return <li key={item.id} data-id={item.id} onClick={click(item)}><img src={item.thumb} height={ts-80} /><br />{item.title}</li>
-    }
-}
-
 const MediaSlide = (props) => { 
     const {
         gallery,
         defaultDisplayType,
+        defaultNavbarHidden,
+        defaultStageHidden,
+        defaultThumbSize,
+        
         loading,
         onLoadMoreData,
         renderFile,
         pagination,
-        renderBigInfo
+        
     } = props;
+    
+    let { renderBigInfo,
+        listItemHTML,
+        detailsItemHTML,
+        thumbnailsItemHTML,
+        slideItemHTML } = props;
+
+    if (!listItemHTML) { 
+        listItemHTML = (click) => { 
+            return (item) => { 
+                return <li key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.tiny} width="32" /> {item.title}</a></li>
+            }
+        }
+    }
+    if (!detailsItemHTML) { 
+        detailsItemHTML=(click) => { 
+            return (item) => { 
+                return <li key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.tiny} width="64" /> {item.title}</a></li>
+            }
+        }
+    }
+    if (!thumbnailsItemHTML) {
+        thumbnailsItemHTML = (click,ts) => { 
+            return (item) => { 
+                return <li key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} width={ts} /><br />{item.title}</a></li>
+            }
+        }
+    }
+    if (!slideItemHTML) { 
+        slideItemHTML = (click,ts) => { 
+            return (item) => { 
+                // The 60 below is the number of pixels we reserve in the slide bar for the label
+                return <li key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} height={ts-80} /><br />{item.title}</a></li>
+            }
+        }
+    }
     const leftbarWidthRatio = 0.4;
+    if (!renderBigInfo) {
+        renderBigInfo=async (i)=>{
+            return <></>
+        }
+        
+    }
     let page = 0,totalPages = 0, loadingIndicator=props?.loadingIndicator;
     if (!loadingIndicator) { 
         loadingIndicator="Loading..."
@@ -47,9 +71,11 @@ const MediaSlide = (props) => {
     if (pagination?.totalPages) totalPages=pagination.totalPages;
     const [displayType, setDisplayType] = useState(defaultDisplayType || 'thumbnails');
     const [viewportHeight, setViewportHeight] = useState(100);
-    const [thumbSize, setThumbSize] = useState(200);
+    const [thumbSize, setThumbSize] = useState(defaultThumbSize||200);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [navbarHeight, setNavbarHeight] = useState(60);
+    
+    const [navbarHeight, setNavbarHeight] = useState(defaultNavbarHidden?0:60);
+    
     const [viewportWidth, setViewportWidth] = useState(100);
     const [leftbarWidth, setLeftbarWidth] = useState(0);
     const [leftbarOpen, setLeftbarOpen] = useState(false);
@@ -62,6 +88,10 @@ const MediaSlide = (props) => {
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
     const [bigInfo, setBigInfo] = useState(null);
+    const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
+    
+    
+    
     
     const containerDiv = useRef();
     const portalDiv = useRef();
@@ -72,7 +102,7 @@ const MediaSlide = (props) => {
     const fileDoubleBuffer2 = useRef();
     const sliderRef = useRef();
     const leftBar = useRef();
-    const stageHeight = (isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75)
+    
     let items, itemHTML;
     let useThumbSize = thumbSize;
 
@@ -89,7 +119,7 @@ const MediaSlide = (props) => {
             break;
         case 'slide': 
             itemHTML=slideItemHTML;
-            useThumbSize=(viewportHeight-navbarHeight)*0.25;
+            useThumbSize=stageHeight==0?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.25;
             break;
     }
     const itemClick = (i, newDisplayType=null) => { 
@@ -157,7 +187,7 @@ const MediaSlide = (props) => {
             const r = () => { 
                 window.postMessage({request:'slideReady'},'*')
             }
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
+            if (i?.metadata?.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e) => { 
                     if (e.data.request=='slideReady') { 
                         fileDoubleBuffer1.current.style.opacity=1;
@@ -194,7 +224,7 @@ const MediaSlide = (props) => {
             const r = () => { 
                 window.postMessage({request:'slideReady'},'*')
             }
-            if (i.metadata.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
+            if (i?.metadata?.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e)=>{ 
                     if (e.data.request=='slideReady') { 
                         fileDoubleBuffer2.current.style.opacity=1;
@@ -285,17 +315,12 @@ const MediaSlide = (props) => {
             if (leftbarOpen && leftbarWidth==0) { 
                 delay=400;
                 clickNum = 0;
-                ;
                 setBigInfo('')
                 setLeftbarWidth(defaultLeftbarWidth)
-                console.log(1);
             } else if (leftbarOpen) { 
-                console.log(2);
                 setCurrentLeftbarWidth(defaultLeftbarWidth);
                 setLeftbarWidth(defaultLeftbarWidth)
             }
-            
-            
             setTimeout(() => { 
                 
                 itemClick(selectedItem, e.target.value)({detail:clickNum});
@@ -353,15 +378,14 @@ const MediaSlide = (props) => {
             e.preventDefault();
         }
     }
-    console.log(leftbarOpened)
-    console.log(leftbarWidth, currentLeftbarWidth, defaultLeftbarWidth)
+
     return (
         <div className={styles['mediaslide-container']} ref={containerDiv}>
         <div className={styles['mediaslide-leftbar']+(leftbarOpened?' '+styles['mediaslide-leftbar-opened']:'')} ref={leftBar} style={{width: leftbarWidth, left:-(leftbarWidth-currentLeftbarWidth)}}>
             {bigInfo}
         </div>
         <div className={styles.mediaslide+' '+styles['mediaslide-'+displayType]} style={{height: viewportHeight}}>
-            <nav className={styles['mediaslide-nav']} style={{height: navbarHeight}}>
+            <nav className={styles['mediaslide-nav']} style={{height: navbarHeight, visibility:navbarHeight==0?'hidden':'visible'}}>
                 <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="list" onChange={displayTypeChange} checked={displayType=='list'} />List</label>
                 <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="details" onChange={displayTypeChange} checked={displayType=='details'} />Details</label>
                 <label className={styles['mediaslide-nav-displaytype']}><input type="radio" name="displayType" value="thumbnails" onChange={displayTypeChange} checked={displayType=='thumbnails'} />Thumbnails<br />
@@ -396,7 +420,7 @@ const MediaSlide = (props) => {
             </div>
             </section>
             
-            <section ref={portalDiv} className={styles['mediaslide-portal']} style={{width: viewportWidth-currentLeftbarWidth, left:currentLeftbarWidth, height: displayType=='slide'?(viewportHeight-navbarHeight)*0.25:viewportHeight-navbarHeight}} onWheel={slideScroll}>
+            <section ref={portalDiv} className={styles['mediaslide-portal']} style={{width: viewportWidth-currentLeftbarWidth, left:currentLeftbarWidth, height: (displayType=='slide'&&stageHeight!=0)?(viewportHeight-navbarHeight)*0.25:viewportHeight-navbarHeight}} onWheel={slideScroll}>
             {items}
             </section>
             
