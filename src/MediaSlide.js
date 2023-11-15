@@ -192,10 +192,10 @@ const MediaSlide = (props) => {
 
         if (currentDoubleBuffer==1) { 
             const l = ()=> {  
-                doubleBuffer1.current.style.opacity=1;
-                doubleBuffer2.current.style.opacity=0;
-                fileDoubleBuffer2.current.style.opacity=0;
-                fileDoubleBuffer1.current.style.opacity=0;
+                if (doubleBuffer1.current) doubleBuffer1.current.style.opacity=1;
+                if (doubleBuffer2.current) doubleBuffer2.current.style.opacity=0;
+                if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity=0;
+                if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity=0;
                 setCurrentDoubleBuffer(2);
                 doubleBuffer1.current.removeEventListener('load',l);
             }
@@ -206,35 +206,38 @@ const MediaSlide = (props) => {
             if (i?.metadata?.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e) => { 
                     if (e.data.request=='slideReady') { 
-                        fileDoubleBuffer1.current.style.opacity=1;
-                        fileDoubleBuffer2.current.style.opacity=0;
-                        doubleBuffer2.current.style.opacity=0;
-                        doubleBuffer1.current.style.opacity=0;
+                        if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity=1;
+                        if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity=0;
+                        if (doubleBuffer2.current) doubleBuffer2.current.style.opacity=0;
+                        if (doubleBuffer1.current) doubleBuffer1.current.style.opacity=0;
                         setCurrentDoubleBuffer(2);
                         fileDoubleBuffer2.current.style.filter='none'
                         window.removeEventListener('message',messageHandler);
                     }
                 }
-                
-                fileDoubleBuffer2.current.style.filter='blur(7px) brightness(70%)'
-                fileDoubleBuffer2.current.style.zIndex=1;
-                fileDoubleBuffer1.current.style.zIndex=2;
+                if (fileDoubleBuffer2.current) { 
+                    fileDoubleBuffer2.current.style.filter='blur(7px) brightness(70%)'
+                    fileDoubleBuffer2.current.style.zIndex=1;
+                }
+                if (fileDoubleBuffer1) fileDoubleBuffer1.current.style.zIndex=2;
                 window.addEventListener('message', messageHandler);
                 renderFile(i,r,'100%',stageHeight,mouseMove).then((buf) => { 
                     setFileBuffer1(buf);
                 })   
             } else { 
-                doubleBuffer1.current.addEventListener('load',l);
-                doubleBuffer1.current.src=i.full;
+                if (doubleBuffer1.current) { 
+                    doubleBuffer1.current.addEventListener('load',l);
+                    doubleBuffer1.current.src=i.full;
+                }
             }
         } else {
             const l = ()=> {
-                doubleBuffer2.current.style.opacity=1;
-                doubleBuffer1.current.style.opacity=0;
-                fileDoubleBuffer1.current.style.opacity=0;
-                fileDoubleBuffer2.current.style.opacity=0;
+                if (doubleBuffer2.current) doubleBuffer2.current.style.opacity=1;
+                if (doubleBuffer1.current) doubleBuffer1.current.style.opacity=0;
+                if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity=0;
+                if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity=0;
                 setCurrentDoubleBuffer(1);
-                doubleBuffer2.current.removeEventListener('load', l);
+                if (doubleBuffer2.current) doubleBuffer2.current.removeEventListener('load', l);
             }
 
             const r = () => { 
@@ -243,25 +246,27 @@ const MediaSlide = (props) => {
             if (i?.metadata?.files && i.metadata.files.length>0 && i.metadata.files[0]?.mediaType?.substring(0,9)=='text/html') { 
                 const messageHandler=(e)=>{ 
                     if (e.data.request=='slideReady') { 
-                        fileDoubleBuffer2.current.style.opacity=1;
-                        fileDoubleBuffer1.current.style.opacity=0;
-                        doubleBuffer1.current.style.opacity=0;
-                        doubleBuffer2.current.style.opacity=0;
+                        if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity=1;
+                        if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity=0;
+                        if (doubleBuffer1.current) doubleBuffer1.current.style.opacity=0;
+                        if (doubleBuffer2.current) doubleBuffer2.current.style.opacity=0;
                         setCurrentDoubleBuffer(1);
-                        fileDoubleBuffer1.current.style.filter='none'
+                        if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.filter='none'
                         window.removeEventListener('message',messageHandler)
                     }
                 }
-                fileDoubleBuffer1.current.style.filter='blur(7px) brightness(70%)'
-                fileDoubleBuffer2.current.style.zIndex=2;
-                fileDoubleBuffer1.current.style.zIndex=1;
+                if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.filter='blur(7px) brightness(70%)'
+                if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.zIndex=2;
+                if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.zIndex=1;
                 window.addEventListener('message',messageHandler);
                 renderFile(i,r,'100%',stageHeight,mouseMove).then((buf)=> { 
                     setFileBuffer2(buf);
                 })
             } else { 
-                doubleBuffer2.current.addEventListener('load', l);
-                doubleBuffer2.current.src=i.full;
+                if (doubleBuffer2.current) { 
+                    doubleBuffer2.current.addEventListener('load', l);
+                    doubleBuffer2.current.src=i.full;
+                }
             }
             
         }
