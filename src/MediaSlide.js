@@ -197,7 +197,7 @@ const MediaSlide = (props) => {
                 if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity=0;
                 if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity=0;
                 setCurrentDoubleBuffer(2);
-                doubleBuffer1.current.removeEventListener('load',l);
+                if (doubleBuffer1.current) doubleBuffer1.current.removeEventListener('load',l);
             }
           
             const r = () => { 
