@@ -78,6 +78,7 @@ const MediaSlide = (props) => {
     const [leftPageCursor, setLeftPageCursor] = useState(page);
     const [rightPageCursor, setRightPageCursor] = useState(page);
     const [navbarHeight, setNavbarHeight] = useState(defaultNavbarHidden?0:60);
+    
     const [viewportWidth, setViewportWidth] = useState(100);
     const [leftbarWidth, setLeftbarWidth] = useState(0);
     const [leftbarOpen, setLeftbarOpen] = useState(false);
@@ -85,16 +86,36 @@ const MediaSlide = (props) => {
     const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(0);
     const [currentLeftbarWidth, setCurrentLeftbarWidth] = useState(0);
     const [currentDoubleBuffer, setCurrentDoubleBuffer] = useState(1);
+    const [loadedPages, setLoadedPages] = useState([page]);
+    const [loadingPages, setLoadingPages] = useState([page]);
+    const [loadingComplete, setLoadingComplete] =useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [lastElement, setLastElement] = useState(null);
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
+    
     const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection):null);
     
     const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
     let navbarTimer=null;
-    
+    const doLoadingTimer = useCallback(() => { 
+        if (loadedPages.length==loadingPages.length) {
+            setLoadingComplete(true);
+            console.log('LOADING complete');
+        } else { 
+            setTimeout(()=>{
+                doLoadingTimer();
+            },2000);
+        }
+    },[loadedPages, loadingPages]);
+    useEffect(() => { 
+        setTimeout(() => { 
+            doLoadingTimer();
+        },3000);
+    },[]);
 
+    if (!loadedPages.includes(page)) setLoadedPages([...loadedPages,page]);
+    const currentlyLoading=!(loadedPages.length==loadingPages.length);
     
     const containerDiv = useRef();
     const portalDiv = useRef();
@@ -116,7 +137,7 @@ const MediaSlide = (props) => {
         } else if (page<initialPage && page<leftPageCursor) { 
             setLeftPageCursor(page);
         }
-        if (sliderRef.current && selectedItem?.id) {
+        if (sliderRef.current && selectedItem?.id && !loadingComplete) {
             sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
         }
     },[page,rightPageCursor, leftPageCursor])
@@ -191,7 +212,7 @@ const MediaSlide = (props) => {
                 if (dt == 'slide' || e.detail < 1) { 
                     setTimeout(()=>{
                         sliderRef.current.querySelector('li[data-id="'+i.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
-                    },100);
+                    },1000);
                 }
                 if (dt=='slide' || e.detail > 1) {
                     flipDoubleBuffer(i,dt);
@@ -302,17 +323,22 @@ const MediaSlide = (props) => {
     } else { 
         items = <h1>{loadingIndicator}</h1>
     }
-    
+    const addLoading = useCallback((p)=> { 
+        setLoadingPages([...loadingPages,p])
+    }, [loadingPages])
+
+    const loadingContains = useCallback((p) => { 
+        return loadingPages.includes(p);
+    },[loadingPages])
+
     useEffect(() => {
         
         const endObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-              async function fetchMorePosts() {
-                if (rightPageCursor<totalPages) { 
-                    onLoadMoreData({page: rightPageCursor},1);
-                }
+              if (rightPageCursor<totalPages && !loadingContains(rightPageCursor+1)) { 
+                onLoadMoreData({page: rightPageCursor},1);
+                addLoading(rightPageCursor+1);
               }
-              fetchMorePosts();
             }
           });
           if (loadMoreRef.current) { 
@@ -320,12 +346,12 @@ const MediaSlide = (props) => {
           }
           const startObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-              async function fetchMorePosts() {
-                if (!firstPageLoaded && leftPageCursor!=0) { 
-                    onLoadMoreData({page: leftPageCursor},-1);
-                }
+
+              if (!firstPageLoaded && leftPageCursor!=0 && !loadingContains(leftPageCursor-1)) { 
+                
+                onLoadMoreData({page: leftPageCursor},-1);
+                addLoading(leftPageCursor-1)
               }
-              fetchMorePosts();
             }
           });
           if (loadPrevRef.current) { 
