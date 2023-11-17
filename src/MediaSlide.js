@@ -345,7 +345,6 @@ const MediaSlide = (props) => {
           }
     }, leftPageCursor, firstPageLoaded)
     useEffect(() => {
-        
         const endObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 endOb();
@@ -392,6 +391,7 @@ const MediaSlide = (props) => {
             setViewportWidth(event[0].contentBoxSize[0].inlineSize);
             setViewportHeight(event[0].contentBoxSize[0].blockSize);
             let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
+            if (leftbarW==0) return;
             if (leftbarW>600) leftbarW=600;
 
             setDefaultLeftbarWidth(leftbarW);
