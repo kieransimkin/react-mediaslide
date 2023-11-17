@@ -13,7 +13,7 @@ const MediaSlide = (props) => {
         defaultNavbarHidden,
         defaultStageHidden,
         defaultThumbSize,
-        
+        selectionChange,
         loading,
         onLoadMoreData,
         renderFile,
@@ -147,10 +147,12 @@ const MediaSlide = (props) => {
                     sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.classList?.remove(styles['mediaslide-item-selected'])
                 }
                 setSelectedItem(i);
-                
-                    renderBigInfo(i).then((buf) => { 
+                if (typeof selectionChange == 'function') { 
+                    selectionChange(i)
+                }
+                renderBigInfo(i).then((buf) => { 
                         setBigInfo(buf);
-                    })
+                })
                  
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
