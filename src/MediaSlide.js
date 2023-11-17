@@ -133,7 +133,6 @@ const MediaSlide = (props) => {
     useEffect(()=>{ 
         if (page==0) setFirstPageLoaded(true);
         if (page>initialPage && page>rightPageCursor) { 
-            console.log('setting right page cursor to '+page);
             setRightPageCursor(page);
         } else if (page<initialPage && page<leftPageCursor) { 
             setLeftPageCursor(page);
