@@ -133,6 +133,7 @@ const MediaSlide = (props) => {
     useEffect(()=>{ 
         if (page==0) setFirstPageLoaded(true);
         if (page>initialPage && page>rightPageCursor) { 
+            console.log('setting right page cursor to '+page);
             setRightPageCursor(page);
         } else if (page<initialPage && page<leftPageCursor) { 
             setLeftPageCursor(page);
@@ -332,18 +333,21 @@ const MediaSlide = (props) => {
     },[loadingPages])
 
     const endOb = useCallback(() => { 
+        
         if (rightPageCursor<totalPages && !loadingContains(rightPageCursor+1)) { 
+    
             onLoadMoreData({page: rightPageCursor},1);
             addLoading(rightPageCursor+1);
-          }
-    },[rightPageCursor, totalPages])
+        }
+    },[rightPageCursor, totalPages, gallery])
     const startOb = useCallback(() => { 
-        if (!firstPageLoaded && leftPageCursor!=0 && !loadingContains(leftPageCursor-1)) { 
-                
+        
+        if (!firstPageLoaded && leftPageCursor!=0 && !loadingContains(leftPageCursor-1)) {     
             onLoadMoreData({page: leftPageCursor},-1);
             addLoading(leftPageCursor-1)
-          }
-    }, leftPageCursor, firstPageLoaded)
+        }
+    }, [leftPageCursor, firstPageLoaded,loadingPages])
+
     useEffect(() => {
         const endObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
@@ -365,7 +369,7 @@ const MediaSlide = (props) => {
             endObserver.disconnect();
             startObserver.disconnect();
         }
-    },[loadMoreRef.current, loadPrevRef.current]);
+    },[loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor]);
     const hideNavbar = () => { 
         setNavbarHeight(0);
     }
