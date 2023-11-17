@@ -331,14 +331,24 @@ const MediaSlide = (props) => {
         return loadingPages.includes(p);
     },[loadingPages])
 
+    const endOb = useCallback(() => { 
+        if (rightPageCursor<totalPages && !loadingContains(rightPageCursor+1)) { 
+            onLoadMoreData({page: rightPageCursor},1);
+            addLoading(rightPageCursor+1);
+          }
+    },[rightPageCursor, totalPages])
+    const startOb = useCallback(() => { 
+        if (!firstPageLoaded && leftPageCursor!=0 && !loadingContains(leftPageCursor-1)) { 
+                
+            onLoadMoreData({page: leftPageCursor},-1);
+            addLoading(leftPageCursor-1)
+          }
+    }, leftPageCursor, firstPageLoaded)
     useEffect(() => {
         
         const endObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-              if (rightPageCursor<totalPages && !loadingContains(rightPageCursor+1)) { 
-                onLoadMoreData({page: rightPageCursor},1);
-                addLoading(rightPageCursor+1);
-              }
+                endOb();
             }
           });
           if (loadMoreRef.current) { 
@@ -346,12 +356,7 @@ const MediaSlide = (props) => {
           }
           const startObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-
-              if (!firstPageLoaded && leftPageCursor!=0 && !loadingContains(leftPageCursor-1)) { 
-                
-                onLoadMoreData({page: leftPageCursor},-1);
-                addLoading(leftPageCursor-1)
-              }
+                startOb();
             }
           });
           if (loadPrevRef.current) { 
@@ -361,7 +366,7 @@ const MediaSlide = (props) => {
             endObserver.disconnect();
             startObserver.disconnect();
         }
-    },[loadMoreRef.current, loadPrevRef.current, firstPageLoaded, rightPageCursor, leftPageCursor, gallery, page, totalPages, loading]);
+    },[loadMoreRef.current, loadPrevRef.current]);
     const hideNavbar = () => { 
         setNavbarHeight(0);
     }
