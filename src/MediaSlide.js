@@ -138,7 +138,7 @@ const MediaSlide = (props) => {
             setLeftPageCursor(page);
         }
         if (sliderRef.current && selectedItem?.id && !loadingComplete) {
-            sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
+            sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.scrollIntoView({ behavior: 'instant',block:'center', inline: 'center'}); 
         }
     },[page,rightPageCursor, leftPageCursor])
 
@@ -212,7 +212,7 @@ const MediaSlide = (props) => {
                 if (dt == 'slide' || e.detail < 1) { 
                     setTimeout(()=>{
                         sliderRef.current.querySelector('li[data-id="'+i.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
-                    },1000);
+                    },500);
                 }
                 if (dt=='slide' || e.detail > 1) {
                     flipDoubleBuffer(i,dt);
