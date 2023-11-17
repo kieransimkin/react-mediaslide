@@ -18,7 +18,7 @@ const MediaSlide = (props) => {
         onLoadMoreData,
         renderFile,
         pagination,
-        
+        initialSelection
     } = props;
     
     let { renderBigInfo,
@@ -58,7 +58,7 @@ const MediaSlide = (props) => {
     }
     const leftbarWidthRatio = 0.4;
     if (!renderBigInfo) {
-        renderBigInfo=async (i)=>{
+        renderBigInfo=(i)=>{
             return <></>
         }
         
@@ -73,9 +73,11 @@ const MediaSlide = (props) => {
     const [viewportHeight, setViewportHeight] = useState(100);
     const [thumbSize, setThumbSize] = useState(defaultThumbSize||200);
     const [selectedItem, setSelectedItem] = useState(null);
-    
+    const [firstPageLoaded, setFirstPageLoaded] = useState(page==0);
+    const [initialPage, setInitialPage] = useState(page);
+    const [leftPageCursor, setLeftPageCursor] = useState(page);
+    const [rightPageCursor, setRightPageCursor] = useState(page);
     const [navbarHeight, setNavbarHeight] = useState(defaultNavbarHidden?0:60);
-    
     const [viewportWidth, setViewportWidth] = useState(100);
     const [leftbarWidth, setLeftbarWidth] = useState(0);
     const [leftbarOpen, setLeftbarOpen] = useState(false);
@@ -87,16 +89,17 @@ const MediaSlide = (props) => {
     const [lastElement, setLastElement] = useState(null);
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
-    const [bigInfo, setBigInfo] = useState(null);
+    const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection):null);
     
     const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
     let navbarTimer=null;
     
-    
+
     
     const containerDiv = useRef();
     const portalDiv = useRef();
     const loadMoreRef = useRef();
+    const loadPrevRef = useRef();
     const doubleBuffer1 = useRef();
     const doubleBuffer2 = useRef();
     const fileDoubleBuffer1 = useRef();
@@ -106,6 +109,17 @@ const MediaSlide = (props) => {
     let items, itemHTML;
     let useThumbSize = thumbSize;
 
+    useEffect(()=>{ 
+        if (page==0) setFirstPageLoaded(true);
+        if (page>initialPage && page>rightPageCursor) { 
+            setRightPageCursor(page);
+        } else if (page<initialPage && page<leftPageCursor) { 
+            setLeftPageCursor(page);
+        }
+        if (sliderRef.current && selectedItem?.id) {
+            sliderRef.current.querySelector('li[data-id="'+selectedItem.id+'"]')?.scrollIntoView({behavior: 'smooth', block:'center', inline: 'center'}); 
+        }
+    },[page,rightPageCursor, leftPageCursor])
 
     switch (displayType) { 
         case 'list': 
@@ -150,9 +164,7 @@ const MediaSlide = (props) => {
                 if (typeof selectionChange == 'function') { 
                     selectionChange(i)
                 }
-                renderBigInfo(i).then((buf) => { 
-                        setBigInfo(buf);
-                })
+                setBigInfo(renderBigInfo(i));
                  
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
@@ -281,7 +293,11 @@ const MediaSlide = (props) => {
             if (page<totalPages){
                 lElement=<li ref={loadMoreRef}>{loadingIndicator}</li>
             }
-            items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
+            let fElement;
+            if (!firstPageLoaded) { 
+                fElement=<li ref={loadPrevRef}>{loadingIndicator}</li>
+            }
+            items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize))}{lElement}</ul>
         }
     } else { 
         items = <h1>{loadingIndicator}</h1>
@@ -289,28 +305,43 @@ const MediaSlide = (props) => {
     
     useEffect(() => {
         
-        const intersectionObserver = new IntersectionObserver((entries) => {
+        const endObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
               async function fetchMorePosts() {
-                if (page<totalPages) { 
-                    onLoadMoreData(pagination);
+                if (rightPageCursor<totalPages) { 
+                    onLoadMoreData({page: rightPageCursor},1);
                 }
               }
               fetchMorePosts();
             }
           });
           if (loadMoreRef.current) { 
-            intersectionObserver.observe(loadMoreRef.current);
+            endObserver.observe(loadMoreRef.current);
+          }
+          const startObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+              async function fetchMorePosts() {
+                if (!firstPageLoaded && leftPageCursor!=0) { 
+                    onLoadMoreData({page: leftPageCursor},-1);
+                }
+              }
+              fetchMorePosts();
+            }
+          });
+          if (loadPrevRef.current) { 
+            startObserver.observe(loadPrevRef.current);
           }
         return () => { 
-            intersectionObserver.disconnect();
+            endObserver.disconnect();
+            startObserver.disconnect();
         }
-    },[loadMoreRef.current, gallery, page, totalPages, loading]);
+    },[loadMoreRef.current, loadPrevRef.current, firstPageLoaded, rightPageCursor, leftPageCursor, gallery, page, totalPages, loading]);
     const hideNavbar = () => { 
         setNavbarHeight(0);
     }
   
     useEffect(() => { 
+ 
         navbarTimer=setTimeout(hideNavbar,5000);
         containerDiv.current.addEventListener("mousemove",mouseMove)
         window.document.addEventListener("mousemove",mouseMove);
@@ -334,6 +365,19 @@ const MediaSlide = (props) => {
 
             setDefaultLeftbarWidth(leftbarW);
             setLeftbarWidth(leftbarW);
+
+            if (!selectedItem && initialSelection) { 
+          
+                    //itemClick(initialSelection,'slide')({detail:1})
+                    setLeftbarWidth(leftbarW || 200);
+                    setCurrentLeftbarWidth(leftbarW || 200);
+                    setLeftbarWidth(leftbarW || 200);
+                    setLeftbarOpen(true);
+                    setLeftbarOpened(false);
+                    itemClick(initialSelection,'slide')({detail: -1});
+    
+                
+            }
         });
         resizeObserver.observe(containerDiv.current);
         
