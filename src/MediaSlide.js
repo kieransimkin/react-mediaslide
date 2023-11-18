@@ -6,19 +6,7 @@ import styles from './MediaSlide.module.css'
 import Slider from 'react-slider';
 import * as React from 'react';
 
-export const FullscreenRoundell = ({icon}) => { 
-    
-    let colour = 'rgb(100,00,255)';
-  
-    let margin = '1em';
-  
 
-    return <div style={{boxShadow: '1px 2px 5px 1px rgba(0,0,0,0.5)', outline:'1px solid rgba(0,0,0,0.5)', width: '100%',zIndex: 200000, opacity:0.7, top: 0, right: 0, marginTop: '0.4em', marginLeft: '0.5em', marginBottom: margin,float: 'right',textAlign: 'center', borderRadius: '1.25em', width:'2.5em',height:'2.5em', background: colour, display: 'inline-block'}}>
-    <div style={{textShadow:'3px 3px 2px rgb(0,0,0), 0px 0px 3px rgb(0,0,0,1)', marginBlockStart:0, marginBlockEnd: 0, top:'50%', transform: 'translateY(-50%)', position:'relative'}}><big>{icon}</big>
-Hi
-    </div>
-    </div>
-}
 const MediaSlide = (props) => { 
     const {
         gallery,
@@ -110,10 +98,24 @@ const MediaSlide = (props) => {
     const [fileBuffer1, setFileBuffer1] = useState(null);
     const [fileBuffer2, setFileBuffer2] = useState(null);
     
-    const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection,closeBigInfo):null);
+   
     
     const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
     let navbarTimer=null;
+    const closeBigInfo = () => { 
+        
+        setCurrentLeftbarWidth(0);
+        //setLeftbarWidth(defaultLeftbarWidth || 200);
+        setLeftbarOpen(false);
+        setLeftbarOpened(true);
+        console.log('Got to close big info')
+    }
+    const goFullscreen = () => { 
+        setDisplayType('slide');       
+        setLeftbarOpened(true);
+        setCurrentLeftbarWidth(0);
+    }
+    const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection,closeBigInfo, goFullscreen):null);
     const doLoadingTimer = useCallback(() => { 
         if (loadedPages.length==loadingPages.length) {
             setLoadingComplete(true);
@@ -201,7 +203,7 @@ const MediaSlide = (props) => {
                 if (typeof selectionChange == 'function') { 
                     selectionChange(i)
                 }
-                setBigInfo(renderBigInfo(i,closeBigInfo));
+                setBigInfo(renderBigInfo(i,closeBigInfo, goFullscreen));
                  
                 let dt = newDisplayType;
                 if (displayType!='slide' && e.detail > 1) { 
@@ -236,14 +238,7 @@ const MediaSlide = (props) => {
             }
         }
     }
-    const closeBigInfo = () => { 
-        
-        setCurrentLeftbarWidth(0);
-        //setLeftbarWidth(defaultLeftbarWidth || 200);
-        setLeftbarOpen(false);
-        setLeftbarOpened(true);
-        console.log('Got to close big info')
-    }
+  
     const flipDoubleBuffer = (i, dt) => { 
         
 
