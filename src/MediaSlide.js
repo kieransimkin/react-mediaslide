@@ -32,14 +32,14 @@ const MediaSlide = (props) => {
     if (!listItemHTML) { 
         listItemHTML = (click) => { 
             return (item,s,thumbSpacing) => { 
-                return <li  style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.tiny} width="32" /> {item.title}</a></li>
+                return <li  style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} width="32" /> {item.title}</a></li>
             }
         }
     }
     if (!detailsItemHTML) { 
         detailsItemHTML=(click,s,thumbSpacing) => { 
             return (item) => { 
-                return <li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.tiny} width="64" /> {item.title}</a></li>
+                return <li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} width="64" /> {item.title}</a></li>
             }
         }
     }
