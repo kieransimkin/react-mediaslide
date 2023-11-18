@@ -49,9 +49,11 @@ nav.mediaslide-nav {
 }
 nav.mediaslide-nav > .mediaslide-nav-displaytype { 
     display: inline;
-    padding-top:0.4em;
-    padding-bottom: 0.4em;
-    padding-left: 1.5em;
+    position:relative;
+    top:-0.4em;
+    padding-top:0em;
+    padding-bottom: 0;
+    padding-left: 2.9em;
     padding-right: 1.5em;
     border-right: 1px solid rgba(0,0,0,0.2);
     cursor: pointer;
@@ -59,12 +61,13 @@ nav.mediaslide-nav > .mediaslide-nav-displaytype {
 }
 nav.mediaslide-nav > .mediaslide-nav-displaytype > input { 
     position: relative;
-    left: -0.5em;
+    left: -2em;
 }
 nav.mediaslide-nav > .mediaslide-nav-displaytype:hover {
     background-color: rgba(255,255,255,0.2);
     transition: background-color 0s;
 }
+
 /*
 
 
@@ -358,34 +361,72 @@ rc-slider
     max-width: 500px;
     margin: auto;
     position:relative;
-    top:-0.7em;
+    top:-2em;
   }
-  .mediaslide-slider-thumb {
+  .mediaslide-size-slider-thumb {
     cursor: pointer;
     position: absolute;
     z-index: 100;
-    background: #ffffff;
-    border: 5px solid #3774ff;
+    background: rgba(255,255,255,0.5);
+    border: 5px solid #f79a1b;
     border-radius: 100%;
     display: block;
-    box-shadow: 0 0 2px 0 rgb(0 0 0 / 44%);
+    box-shadow: 0 0 2px 0 rgb(0 0 0 / 44%), inset 1px 1px 2px 1px rgba(0,0,0,1);
+    clip-path: inset(50% 0 0 0)
   }
-  .mediaslide-slider-thumb.active {
+  .mediaslide-size-slider-thumb.active {
     background-color: grey;
   }
-  .mediaslide-slider-track {
+  .mediaslide-size-slider-track {
     position: relative;
     background: #ddd;
   }
-  .mediaslide-slider-track.mediaslide-slider-track-0 {
-    background: #83a9ff;
+  .mediaslide-size-slider-track.mediaslide-size-slider-track-0 {
+    background: #ffa988;
   }
-  .mediaslide-slider .mediaslide-slider-track {
-    top: 20px;
+  .mediaslide-size-slider .mediaslide-size-slider-track {
+    top: 16px;
     height: 4px;
+    border-radius:8px;
   }
-  .mediaslide-slider .mediaslide-slider-thumb {
-    top: 12px;
+  .mediaslide-size-slider .mediaslide-size-slider-thumb {
+    top: 2px;
+    width: 14px;
+    outline: none;
+    height: 26px;
+    line-height: 38px;
+  }
+  
+
+  .mediaslide-spacing-slider-thumb {
+    cursor: pointer;
+    position: absolute;
+    z-index: 100;
+    background: rgba(255,255,255,0.5);
+
+    border: 5px solid #f79a1b;
+    border-radius: 100%;
+    display: block;
+    box-shadow: 0 0 2px 0 rgb(0 0 0 / 44%), inset 1px 1px 2px 1px rgba(0,0,0,1);
+    clip-path: inset(0 0 50% 0)
+  }
+  .mediaslide-spacing-slider-thumb.active {
+    background-color: grey;
+  }
+  .mediaslide-spacing-slider-track {
+    position: relative;
+    background: #ddd;
+  }
+  .mediaslide-spacing-slider-track.mediaslide-spacing-slider-track-0 {
+    background: #ffa988;
+  }
+  .mediaslide-spacing-slider .mediaslide-spacing-slider-track {
+    top: 16px;
+    height: 4px;
+    border-radius:8px;
+  }
+  .mediaslide-spacing-slider .mediaslide-spacing-slider-thumb {
+    top: 6px;
     width: 10px;
     outline: none;
     height: 10px;
@@ -393,4 +434,41 @@ rc-slider
   }
   .mediaslide-slider-opacity { 
     transition: opacity .25s ease-in-out;
+  }
+  input.mediaslide-navbar-radio[type="radio"] {
+    /* ...existing styles */
+    display: grid;
+    position: relative;
+    top:16px;
+    left:-15px;
+    color:green;
+    place-content: center;
+  }
+  
+  input.mediaslide-navbar-radio[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    outline-width:5px;
+    outline-color: #ffffff;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #f79a1b;
+  }
+  input.mediaslide-navbar-radio[type="radio"]::after { 
+    outline: max(2px, 0.15em) solid #f79a1b;
+    outline-offset: max(2px, 0.15em);
+    border-radius:50%;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  input.mediaslide-navbar-radio[type="radio"]:checked::before {
+    transform: scale(1);
   }
