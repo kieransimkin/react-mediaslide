@@ -50,12 +50,14 @@ nav.mediaslide-nav {
 nav.mediaslide-nav > .mediaslide-nav-displaytype { 
     display: inline;
     position:relative;
-    top:-0.4em;
+    top:-0.6em;
     padding-top:0em;
     padding-bottom: 0;
     padding-left: 2.9em;
     padding-right: 1.5em;
-    border-right: 1px solid rgba(0,0,0,0.2);
+    border-right: 1px solid rgba(0,0,0,0);
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
     cursor: pointer;
     transition: background-color 0.4s;
 }
@@ -64,7 +66,7 @@ nav.mediaslide-nav > .mediaslide-nav-displaytype > input {
     left: -2em;
 }
 nav.mediaslide-nav > .mediaslide-nav-displaytype:hover {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 150, 0, 0.2);
     transition: background-color 0s;
 }
 
@@ -439,9 +441,9 @@ rc-slider
     /* ...existing styles */
     display: grid;
     position: relative;
-    top:16px;
+    top:20px;
     left:-15px;
-    color:green;
+
     place-content: center;
   }
   
@@ -451,14 +453,13 @@ rc-slider
     height: 0.65em;
     border-radius: 50%;
     outline-width:5px;
-    outline-color: #ffffff;
+    outline-color: white;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em #f79a1b;
+    
   }
   input.mediaslide-navbar-radio[type="radio"]::after { 
-    outline: max(2px, 0.15em) solid #f79a1b;
-    outline-offset: max(2px, 0.15em);
+    
     border-radius:50%;
     content: '';
     display: block;
@@ -471,4 +472,7 @@ rc-slider
   
   input.mediaslide-navbar-radio[type="radio"]:checked::before {
     transform: scale(1);
+    outline: max(2px, 0.15em) solid #f79a1b;
+    outline-offset: max(2px, 0.15em);
+    
   }
