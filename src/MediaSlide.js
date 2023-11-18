@@ -103,17 +103,15 @@ const MediaSlide = (props) => {
     const stageHeight = defaultStageHidden?0:(isFullscreen?(viewportHeight-navbarHeight):(viewportHeight-navbarHeight)*0.75);
     let navbarTimer=null;
     const closeBigInfo = () => { 
-        
         setCurrentLeftbarWidth(0);
-        //setLeftbarWidth(defaultLeftbarWidth || 200);
         setLeftbarOpen(false);
         setLeftbarOpened(true);
-        console.log('Got to close big info')
     }
     const goFullscreen = () => { 
-        setDisplayType('slide');       
+        
         setLeftbarOpened(true);
         setCurrentLeftbarWidth(0);
+        itemClick(selectedItem,'slide')({detail:2});
     }
     const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection,closeBigInfo, goFullscreen):null);
     const doLoadingTimer = useCallback(() => { 
