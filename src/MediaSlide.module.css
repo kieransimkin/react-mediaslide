@@ -156,6 +156,7 @@ ul.mediaslide-thumbnails-ul {
     align-items: flex-start;
 }
 .mediaslide-thumbnails-ul > li {
+    word-break: break-word;
     display: inline;
     list-style-type: none;
     margin-left: 0.5em;
@@ -210,6 +211,7 @@ ul.mediaslide-list-ul {
 
 }
 ul.mediaslide-list-ul > li { 
+    word-break: break-word;
     display: inline;
     list-style-type: none;
     offset-position: 0px -160%;
@@ -271,6 +273,7 @@ ul.mediaslide-slide-ul {
     padding-inline-start: 0;
 }
 .mediaslide-slide-ul > li {
+    word-break: break-word;
     display: inline;
     list-style-type: none;
     margin-left: 0.3em;
@@ -329,6 +332,7 @@ ul.mediaslide-details-ul {
     display: block;
 }
 ul.mediaslide-details-ul > li { 
+    word-break: break-word;
     display: block;
     list-style-type: none;
     margin: 1em;
