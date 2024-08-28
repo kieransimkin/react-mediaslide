@@ -39,7 +39,7 @@ const MediaSlide = (props) => {
     if (!detailsItemHTML) { 
         detailsItemHTML=(click,s,thumbSpacing) => { 
             return (item) => { 
-                return <li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} width="64" /> {item.title}</a></li>
+                return <tr><td style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} key={item.id} data-id={item.id} onClick={click(item)}><a href={item.linkUrl}><img src={item.thumb} width="64" /> {item.title}</a></td></tr>
             }
         }
     }
@@ -335,7 +335,7 @@ const MediaSlide = (props) => {
                 fElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}}  ref={loadPrevRef}>{loadingIndicator}</li>
             }
             if (displayType=='details') {
-                items = <table ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</table>
+                items = <table ref={sliderRef} style={{tableLayout:fixed}} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</table>
             } else { 
                 items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</ul>
             }
