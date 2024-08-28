@@ -107,11 +107,11 @@ const MediaSlide = (props) => {
         setLeftbarOpen(false);
         setLeftbarOpened(true);
     }
-    const goFullscreen = () => { 
+    const goFullscreen = (i) => { 
         
         setLeftbarOpened(true);
         setCurrentLeftbarWidth(0);
-        itemClick(selectedItem,'slide')({detail:2});
+        itemClick(i,'slide')({detail:2});
     }
     const [bigInfo, setBigInfo] = useState((initialSelection && typeof renderBigInfo == 'function')?renderBigInfo(initialSelection,closeBigInfo, goFullscreen):null);
     const doLoadingTimer = useCallback(() => { 
