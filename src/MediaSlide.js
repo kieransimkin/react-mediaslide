@@ -335,7 +335,7 @@ const MediaSlide = (props) => {
                 fElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}}  ref={loadPrevRef}>{loadingIndicator}</li>
             }
             if (displayType=='details') {
-                items = <table ref={sliderRef} style={{tableLayout:fixed}} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</table>
+                items = <table ref={sliderRef} style={{tableLayout:'fixed'}} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</table>
             } else { 
                 items = <ul ref={sliderRef} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</ul>
             }
