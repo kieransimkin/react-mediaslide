@@ -328,11 +328,19 @@ const MediaSlide = (props) => {
         } else { 
             let lElement;
             if (page<totalPages){
-                lElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} ref={loadMoreRef}>{loadingIndicator}</li>
+                if (displayType=='details') {
+                    lElement=<caption style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} ref={loadMoreRef}>{loadingIndicator}</caption>
+                } else { 
+                    lElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}} ref={loadMoreRef}>{loadingIndicator}</li>
+                }
             }
             let fElement;
             if (!firstPageLoaded) { 
-                fElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}}  ref={loadPrevRef}>{loadingIndicator}</li>
+                if (displayType=='details') {
+                    fElement=<caption style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}}  ref={loadPrevRef}>{loadingIndicator}</caption>
+                } else { 
+                    fElement=<li style={{paddingLeft:thumbSpacing,paddingRight:thumbSpacing,paddingBottom:thumbSpacing}}  ref={loadPrevRef}>{loadingIndicator}</li>
+                }
             }
             if (displayType=='details') {
                 items = <table ref={sliderRef} style={{tableLayout:'fixed'}} className={styles['mediaslide-'+displayType+'-ul']}>{fElement}{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}{lElement}</table>
