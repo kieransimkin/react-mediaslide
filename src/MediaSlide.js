@@ -394,10 +394,10 @@ const MediaSlide = (props) => {
 		if (gallery.length < 1) {
 			items = <h1>Not found</h1>;
 		} else {
-			let lElement;
+			let lElement, ldElement;
 			if (page < totalPages) {
-				if (displayType === 'details') {
-					lElement = (
+				
+					ldElement = (
 						<caption
 							style={{
 								paddingLeft: thumbSpacing,
@@ -409,7 +409,7 @@ const MediaSlide = (props) => {
 							{loadingIndicator}
 						</caption>
 					);
-				} else {
+				
 					lElement = (
 						<li
 							style={{
@@ -422,12 +422,12 @@ const MediaSlide = (props) => {
 							{loadingIndicator}
 						</li>
 					);
-				}
+				
 			}
-			let fElement;
+			let fElement, fdElement;
 			if (!firstPageLoaded) {
-				if (displayType === 'details') {
-					fElement = (
+				
+					fdElement = (
 						<caption
 							style={{
 								paddingLeft: thumbSpacing,
@@ -439,7 +439,7 @@ const MediaSlide = (props) => {
 							{loadingIndicator}
 						</caption>
 					);
-				} else {
+				
 					fElement = (
 						<li
 							style={{
@@ -452,7 +452,7 @@ const MediaSlide = (props) => {
 							{loadingIndicator}
 						</li>
 					);
-				}
+				
 			}
 			if (displayType === 'details') {
 				items = (
@@ -462,9 +462,9 @@ const MediaSlide = (props) => {
 						className={styles['mediaslide-' + displayType + '-ul']}
 					>
 						<tbody>
-							{fElement}
+							{fdElement}
 							{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
-							{lElement}
+							{ldElement}
 						</tbody>
 					</table>
 				);
