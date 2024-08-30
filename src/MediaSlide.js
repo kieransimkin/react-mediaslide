@@ -556,12 +556,12 @@ const MediaSlide = (props) => {
 			if (leftbarW === 0) return;
 			if (leftbarW > 600) leftbarW = 600;
 			if (leftbarW < 300) leftbarW = 300;
-			setDefaultLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
-			setLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
+			setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
 			if (!selectedItem && initialSelection) {
 				//itemClick(initialSelection,'slide')({detail:1})
-				setLeftbarWidth(isPortrait() ? viewportWidth : leftbarW || 300);
-				setCurrentLeftbarWidth(isPortrait() ? viewportWidth : leftbarW || 300);
+				setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+				setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
