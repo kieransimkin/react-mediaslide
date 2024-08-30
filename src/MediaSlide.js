@@ -784,7 +784,7 @@ const MediaSlide = (props) => {
 				>
 					<div className={styles['mediaslide-double-buffer-container']} style={{ opacity: '1' }}>
 						<img
-                            alt="Media display window"
+							alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
@@ -792,7 +792,7 @@ const MediaSlide = (props) => {
 							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<img
-                            alt="Media display window"
+							alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
