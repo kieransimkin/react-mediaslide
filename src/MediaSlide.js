@@ -452,19 +452,17 @@ const MediaSlide = (props) => {
 			}
 			if (displayType === 'details') {
 				items = (
-                    <>
-                    {fdElement}
-                        <table
-                            ref={sliderRef}
-                            style={{ tableLayout: 'fixed' }}
-                            className={styles['mediaslide-' + displayType + '-ul']}
-                        >
-                            <tbody>
-                                {gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
-                            </tbody>
-                        </table>
-                    {ldElement}
-                    </>
+					<>
+						{fdElement}
+						<table
+							ref={sliderRef}
+							style={{ tableLayout: 'fixed' }}
+							className={styles['mediaslide-' + displayType + '-ul']}
+						>
+							<tbody>{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}</tbody>
+						</table>
+						{ldElement}
+					</>
 				);
 			} else {
 				items = (
