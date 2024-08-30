@@ -670,7 +670,7 @@ const MediaSlide = (props) => {
 					styles['mediaslide-leftbar'] + (leftbarOpened ? ' ' + styles['mediaslide-leftbar-opened'] : '')
 				}
 				ref={leftBar}
-				style={{ width: leftbarWidth, left: -(leftbarWidth - currentLeftbarWidth) }}
+				style={{height: leftbarWidth==0 ? 0 : viewportHeight, width: leftbarWidth, left: -(leftbarWidth - currentLeftbarWidth) }}
 			>
 				<div style={{ position: 'relative', top: navbarHeight }}>{bigInfo}</div>
 			</div>
