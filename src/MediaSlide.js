@@ -275,8 +275,8 @@ const MediaSlide = (props) => {
 					setCurrentLeftbarWidth(0);
 				}
 				if (dt != 'slide' && !leftbarOpen && e.detail > 0) {
-					setLeftbarWidth(defaultLeftbarWidth || 200);
-					setCurrentLeftbarWidth(defaultLeftbarWidth || 200);
+					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
+					setCurrentLeftbarWidth(isPortrait() ? viewportWidth :defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
 				} else if (dt == 'slide' && leftbarOpen && e.detail > 0) {
@@ -555,15 +555,13 @@ const MediaSlide = (props) => {
 			let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
 			if (leftbarW == 0) return;
 			if (leftbarW > 600) leftbarW = 600;
-
-			setDefaultLeftbarWidth(leftbarW);
-			setLeftbarWidth(leftbarW);
-
+            if (leftbarW < 300) leftbarW = 300;
+			setDefaultLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
+			setLeftbarWidth(isPortrait() ? viewportWidth: leftbarW);
 			if (!selectedItem && initialSelection) {
 				//itemClick(initialSelection,'slide')({detail:1})
-				setLeftbarWidth(leftbarW || 200);
-				setCurrentLeftbarWidth(leftbarW || 200);
-				setLeftbarWidth(leftbarW || 200);
+				setLeftbarWidth(leftbarW || 300);
+				setCurrentLeftbarWidth(leftbarW || 300);
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
@@ -582,6 +580,10 @@ const MediaSlide = (props) => {
 			window.removeEventListener('keydown', listener);
 		};
 	}, [displayType]);
+
+    const isPortrait = () => {
+        return window.innerHeight > window.innerWidth;
+    }
 
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
