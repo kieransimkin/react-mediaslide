@@ -525,7 +525,7 @@ const MediaSlide = (props) => {
 			endObserver.disconnect();
 			startObserver.disconnect();
 		};
-	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor]);
+	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor, displayType]);
 	const hideNavbar = () => {
 		setNavbarHeight(0);
 	};
