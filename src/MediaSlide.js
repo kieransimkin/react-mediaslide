@@ -560,8 +560,8 @@ const MediaSlide = (props) => {
 			setLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
 			if (!selectedItem && initialSelection) {
 				//itemClick(initialSelection,'slide')({detail:1})
-				setLeftbarWidth(leftbarW || 300);
-				setCurrentLeftbarWidth(leftbarW || 300);
+				setLeftbarWidth(isPortrait() ? viewportWidth : leftbarW || 300);
+				setCurrentLeftbarWidth(isPortrait() ? viewportWidth : leftbarW || 300);
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
