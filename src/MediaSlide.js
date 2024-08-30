@@ -34,7 +34,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} width="32" /> {item.title}
+							<img src={item.thumb} width="32" alt={item.title} /> {item.title}
 						</a>
 					</li>
 				);
@@ -57,7 +57,7 @@ const MediaSlide = (props) => {
 							onClick={click(item)}
 						>
 							<a href={item.linkUrl}>
-								<img src={item.thumb} width="64" /> {item.title}
+								<img src={item.thumb} width="64" alt={item.title} /> {item.title}
 							</a>
 						</td>
 					</tr>
@@ -76,7 +76,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} width={ts} />
+							<img src={item.thumb} width={ts} alt={item.title} />
 							<br />
 							{item.title}
 						</a>
@@ -97,7 +97,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} height={ts - 80} />
+							<img src={item.thumb} height={ts - 80} alt={item.title} />
 							<br />
 							{item.title}
 						</a>
@@ -233,7 +233,7 @@ const MediaSlide = (props) => {
 	}
 	const mouseMove = (e) => {
 		if (e.clientY < 60) {
-			if (displayType != 'slide') {
+			if (displayType !== 'slide') {
 				clearTimeout(navbarTimer);
 
 				navbarTimer = setTimeout(hideNavbar, 5000);
@@ -242,7 +242,7 @@ const MediaSlide = (props) => {
 		}
 	};
 	const scroll = () => {
-		if (displayType != 'slide') {
+		if (displayType !== 'slide') {
 			clearTimeout(navbarTimer);
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
@@ -254,7 +254,7 @@ const MediaSlide = (props) => {
 			if (!newDisplayType) newDisplayType = displayType;
 			if (!i) return;
 
-			if (selectedItem != i || e.detail > 1 || e.detail < 1) {
+			if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
 				if (selectedItem) {
 					sliderRef.current
 						.querySelector('li[data-id="' + selectedItem.id + '"]')
@@ -267,14 +267,14 @@ const MediaSlide = (props) => {
 				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen));
 
 				let dt = newDisplayType;
-				if (displayType != 'slide' && e.detail > 1) {
+				if (displayType !== 'slide' && e.detail > 1) {
 					dt = 'slide';
 					setDisplayType('slide');
 					//setLeftbarWidth(0);
 					setLeftbarOpened(true);
 					setCurrentLeftbarWidth(0);
 				}
-				if (dt != 'slide' && !leftbarOpen && e.detail > 0) {
+				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
 					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
@@ -502,7 +502,7 @@ const MediaSlide = (props) => {
 		}
 	}, [rightPageCursor, totalPages, gallery]);
 	const startOb = useCallback(() => {
-		if (!firstPageLoaded && leftPageCursor != 0 && !loadingContains(leftPageCursor - 1)) {
+		if (!firstPageLoaded && leftPageCursor !== 0 && !loadingContains(leftPageCursor - 1)) {
 			onLoadMoreData({ page: leftPageCursor }, -1);
 			addLoading(leftPageCursor - 1);
 		}
@@ -587,7 +587,7 @@ const MediaSlide = (props) => {
 
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
-		if (e.target.value != 'slide') {
+		if (e.target.value !== 'slide') {
 			setFileBuffer1('');
 			setFileBuffer2('');
 			let delay = 10;
@@ -614,18 +614,18 @@ const MediaSlide = (props) => {
 	};
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
-		if (displayType != 'thumbnails') {
+		if (displayType !== 'thumbnails') {
 			setDisplayType('thumbnails');
 		}
 	};
 	const thumbSpacingSlide = (s) => {
 		setThumbSpacing(s);
-		if (displayType != 'thumbnails') {
+		if (displayType !== 'thumbnails') {
 			setDisplayType('thumbnails');
 		}
 	};
 	const toggleFullscreen = () => {
-		if (displayType != 'slide') {
+		if (displayType !== 'slide') {
 			setDisplayType('slide');
 		}
 		if (isFullscreen) {
@@ -635,7 +635,7 @@ const MediaSlide = (props) => {
 		}
 	};
 	const slideScroll = (e) => {
-		if (displayType != 'slide' && displayType != 'list') return;
+		if (displayType !== 'slide' && displayType !== 'list') return;
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
 		container.scrollTo({
@@ -784,6 +784,7 @@ const MediaSlide = (props) => {
 				>
 					<div className={styles['mediaslide-double-buffer-container']} style={{ opacity: '1' }}>
 						<img
+                            alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
@@ -791,6 +792,7 @@ const MediaSlide = (props) => {
 							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<img
+                            alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
@@ -831,7 +833,7 @@ const MediaSlide = (props) => {
 						width: viewportWidth - currentLeftbarWidth,
 						left: currentLeftbarWidth,
 						height:
-							displayType === 'slide' && stageHeight != 0
+							displayType === 'slide' && stageHeight !== 0
 								? (viewportHeight - navbarHeight) * 0.25
 								: viewportHeight - navbarHeight,
 					}}
