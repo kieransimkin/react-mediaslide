@@ -687,8 +687,7 @@ const MediaSlide = (props) => {
 					style={{
 						height: navbarHeight,
 						visibility: navbarHeight === 0 ? 'hidden' : 'visible',
-						transform:
-							viewportWidth < 512 ? 'scale(0.5) translateY(-25%)' : 'none',
+						transform: viewportWidth < 512 ? 'scale(0.5) translateY(-25%)' : 'none',
 					}}
 				>
 					<label className={styles['mediaslide-nav-displaytype']}>
