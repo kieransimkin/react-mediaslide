@@ -241,14 +241,14 @@ const MediaSlide = (props) => {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		}
 	};
-    const scroll = () => { 
-        if (displayType != 'slide') {
-            clearTimeout(navbarTimer);
+	const scroll = () => {
+		if (displayType != 'slide') {
+			clearTimeout(navbarTimer);
 
-            navbarTimer = setTimeout(hideNavbar, 5000);
-        }
-        setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-    }
+			navbarTimer = setTimeout(hideNavbar, 5000);
+		}
+		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+	};
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
 			if (!newDisplayType) newDisplayType = displayType;
@@ -460,11 +460,13 @@ const MediaSlide = (props) => {
 						ref={sliderRef}
 						style={{ tableLayout: 'fixed' }}
 						className={styles['mediaslide-' + displayType + '-ul']}
-					><tbody>
-						{fElement}
-						{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
-						{lElement}
-                    </tbody></table>
+					>
+						<tbody>
+							{fElement}
+							{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
+							{lElement}
+						</tbody>
+					</table>
 				);
 			} else {
 				items = (
