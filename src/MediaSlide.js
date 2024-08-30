@@ -397,7 +397,7 @@ const MediaSlide = (props) => {
 			let lElement, ldElement;
 			if (page < totalPages) {
 				ldElement = (
-					<caption
+					<div
 						style={{
 							paddingLeft: thumbSpacing,
 							paddingRight: thumbSpacing,
@@ -406,7 +406,7 @@ const MediaSlide = (props) => {
 						ref={loadMoreRef}
 					>
 						{loadingIndicator}
-					</caption>
+					</div>
 				);
 
 				lElement = (
@@ -452,17 +452,19 @@ const MediaSlide = (props) => {
 			}
 			if (displayType === 'details') {
 				items = (
-					<table
-						ref={sliderRef}
-						style={{ tableLayout: 'fixed' }}
-						className={styles['mediaslide-' + displayType + '-ul']}
-					>
-						<tbody>
-							{fdElement}
-							{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
-							{ldElement}
-						</tbody>
-					</table>
+                    <>
+                    {fdElement}
+                        <table
+                            ref={sliderRef}
+                            style={{ tableLayout: 'fixed' }}
+                            className={styles['mediaslide-' + displayType + '-ul']}
+                        >
+                            <tbody>
+                                {gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
+                            </tbody>
+                        </table>
+                    {ldElement}
+                    </>
 				);
 			} else {
 				items = (
