@@ -126,7 +126,7 @@ const MediaSlide = (props) => {
 	const [thumbSize, setThumbSize] = useState(defaultThumbSize || 200);
 	const [thumbSpacing, setThumbSpacing] = useState(defaultThumbSpacing || 0);
 	const [selectedItem, setSelectedItem] = useState(null);
-	const [firstPageLoaded, setFirstPageLoaded] = useState(page == 0);
+	const [firstPageLoaded, setFirstPageLoaded] = useState(page === 0);
 	const [initialPage, setInitialPage] = useState(page);
 	const [leftPageCursor, setLeftPageCursor] = useState(page);
 	const [rightPageCursor, setRightPageCursor] = useState(page);
@@ -166,12 +166,12 @@ const MediaSlide = (props) => {
 		};
 	};
 	const [bigInfo, setBigInfo] = useState(
-		initialSelection && typeof renderBigInfo == 'function'
+		initialSelection && typeof renderBigInfo === 'function'
 			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen)
 			: null,
 	);
 	const doLoadingTimer = useCallback(() => {
-		if (loadedPages.length == loadingPages.length) {
+		if (loadedPages.length === loadingPages.length) {
 			setLoadingComplete(true);
 			console.log('LOADING complete');
 		} else {
@@ -187,7 +187,7 @@ const MediaSlide = (props) => {
 	}, []);
 
 	if (!loadedPages.includes(page)) setLoadedPages([...loadedPages, page]);
-	const currentlyLoading = !(loadedPages.length == loadingPages.length);
+	const currentlyLoading = !(loadedPages.length === loadingPages.length);
 
 	const containerDiv = useRef();
 	const portalDiv = useRef();
@@ -203,7 +203,7 @@ const MediaSlide = (props) => {
 	let useThumbSize = thumbSize;
 
 	useEffect(() => {
-		if (page == 0) setFirstPageLoaded(true);
+		if (page === 0) setFirstPageLoaded(true);
 		if (page > initialPage && page > rightPageCursor) {
 			setRightPageCursor(page);
 		} else if (page < initialPage && page < leftPageCursor) {
@@ -228,7 +228,7 @@ const MediaSlide = (props) => {
 			break;
 		case 'slide':
 			itemHTML = slideItemHTML;
-			useThumbSize = stageHeight == 0 ? viewportHeight - navbarHeight : (viewportHeight - navbarHeight) * 0.25;
+			useThumbSize = stageHeight === 0 ? viewportHeight - navbarHeight : (viewportHeight - navbarHeight) * 0.25;
 			break;
 	}
 	const mouseMove = (e) => {
@@ -261,7 +261,7 @@ const MediaSlide = (props) => {
 						?.classList?.remove(styles['mediaslide-item-selected']);
 				}
 				setSelectedItem(i);
-				if (typeof selectionChange == 'function') {
+				if (typeof selectionChange === 'function') {
 					selectionChange(i);
 				}
 				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen));
@@ -279,7 +279,7 @@ const MediaSlide = (props) => {
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
-				} else if (dt == 'slide' && leftbarOpen && e.detail > 0) {
+				} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
 					//setLeftbarWidth(0);
 
 					setLeftbarOpened(true);
@@ -287,14 +287,14 @@ const MediaSlide = (props) => {
 				sliderRef.current
 					.querySelector('li[data-id="' + i.id + '"]')
 					?.classList?.add(styles['mediaslide-item-selected']);
-				if (dt == 'slide' || e.detail < 1) {
+				if (dt === 'slide' || e.detail < 1) {
 					setTimeout(() => {
 						sliderRef.current
 							.querySelector('li[data-id="' + i.id + '"]')
 							?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 					}, 500);
 				}
-				if (dt == 'slide' || e.detail > 1) {
+				if (dt === 'slide' || e.detail > 1) {
 					flipDoubleBuffer(i, dt);
 				}
 			}
@@ -302,7 +302,7 @@ const MediaSlide = (props) => {
 	};
 
 	const flipDoubleBuffer = (i, dt) => {
-		if (currentDoubleBuffer == 1) {
+		if (currentDoubleBuffer === 1) {
 			const l = () => {
 				if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 1;
 				if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 0;
@@ -318,10 +318,10 @@ const MediaSlide = (props) => {
 			if (
 				i?.metadata?.files &&
 				i.metadata.files.length > 0 &&
-				i.metadata.files[0]?.mediaType?.substring(0, 9) == 'text/html'
+				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
 				const messageHandler = (e) => {
-					if (e.data.request == 'slideReady') {
+					if (e.data.request === 'slideReady') {
 						if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity = 1;
 						if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity = 0;
 						if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 0;
@@ -362,10 +362,10 @@ const MediaSlide = (props) => {
 			if (
 				i?.metadata?.files &&
 				i.metadata.files.length > 0 &&
-				i.metadata.files[0]?.mediaType?.substring(0, 9) == 'text/html'
+				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
 				const messageHandler = (e) => {
-					if (e.data.request == 'slideReady') {
+					if (e.data.request === 'slideReady') {
 						if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity = 1;
 						if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity = 0;
 						if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 0;
@@ -396,7 +396,7 @@ const MediaSlide = (props) => {
 		} else {
 			let lElement;
 			if (page < totalPages) {
-				if (displayType == 'details') {
+				if (displayType === 'details') {
 					lElement = (
 						<caption
 							style={{
@@ -426,7 +426,7 @@ const MediaSlide = (props) => {
 			}
 			let fElement;
 			if (!firstPageLoaded) {
-				if (displayType == 'details') {
+				if (displayType === 'details') {
 					fElement = (
 						<caption
 							style={{
@@ -454,7 +454,7 @@ const MediaSlide = (props) => {
 					);
 				}
 			}
-			if (displayType == 'details') {
+			if (displayType === 'details') {
 				items = (
 					<table
 						ref={sliderRef}
@@ -553,7 +553,7 @@ const MediaSlide = (props) => {
 			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
 			setViewportHeight(event[0].contentBoxSize[0].blockSize);
 			let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
-			if (leftbarW == 0) return;
+			if (leftbarW === 0) return;
 			if (leftbarW > 600) leftbarW = 600;
 			if (leftbarW < 300) leftbarW = 300;
 			setDefaultLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
@@ -592,7 +592,7 @@ const MediaSlide = (props) => {
 			setFileBuffer2('');
 			let delay = 10;
 			let clickNum = 0;
-			if (leftbarOpen && leftbarWidth == 0) {
+			if (leftbarOpen && leftbarWidth === 0) {
 				delay = 400;
 				clickNum = 0;
 
@@ -680,7 +680,7 @@ const MediaSlide = (props) => {
 			>
 				<nav
 					className={styles['mediaslide-nav']}
-					style={{ height: navbarHeight, visibility: navbarHeight == 0 ? 'hidden' : 'visible' }}
+					style={{ height: navbarHeight, visibility: navbarHeight === 0 ? 'hidden' : 'visible' }}
 				>
 					<label className={styles['mediaslide-nav-displaytype']}>
 						<input
@@ -689,7 +689,7 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="list"
 							onChange={displayTypeChange}
-							checked={displayType == 'list'}
+							checked={displayType === 'list'}
 						/>
 						List
 					</label>
@@ -700,7 +700,7 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="details"
 							onChange={displayTypeChange}
-							checked={displayType == 'details'}
+							checked={displayType === 'details'}
 						/>
 						Details
 					</label>
@@ -711,13 +711,13 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="thumbnails"
 							onChange={displayTypeChange}
-							checked={displayType == 'thumbnails'}
+							checked={displayType === 'thumbnails'}
 						/>
 						Thumbnails
 						<br />
 						<div
 							className={styles['mediaslide-slider-opacity']}
-							style={{ opacity: displayType == 'thumbnails' ? '1' : '0.2' }}
+							style={{ opacity: displayType === 'thumbnails' ? '1' : '0.2' }}
 						>
 							<Slider
 								min={100}
@@ -746,13 +746,13 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="slide"
 							onChange={displayTypeChange}
-							checked={displayType == 'slide'}
+							checked={displayType === 'slide'}
 						/>
 						Slide
 						<br />
 						<div
 							className={styles['mediaslide-transport-opacity']}
-							style={{ opacity: displayType == 'slide' ? '1' : '0.2' }}
+							style={{ opacity: displayType === 'slide' ? '1' : '0.2' }}
 						>
 							<button
 								onClick={toggleFullscreen}
@@ -778,8 +778,8 @@ const MediaSlide = (props) => {
 				<section
 					className={styles['mediaslide-slide-stage']}
 					style={{
-						height: displayType == 'slide' ? stageHeight : 0,
-						opacity: displayType == 'slide' ? '1' : '0',
+						height: displayType === 'slide' ? stageHeight : 0,
+						opacity: displayType === 'slide' ? '1' : '0',
 					}}
 				>
 					<div className={styles['mediaslide-double-buffer-container']} style={{ opacity: '1' }}>
@@ -788,20 +788,20 @@ const MediaSlide = (props) => {
 							style={{ opacity: 0 }}
 							src=""
 							ref={doubleBuffer1}
-							height={displayType == 'slide' ? stageHeight : 0}
+							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<img
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
 							ref={doubleBuffer2}
-							height={displayType == 'slide' ? stageHeight : 0}
+							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<div
 							className={styles['mediaslide-double-buffer']}
 							style={{
 								opacity: 0,
-								height: displayType == 'slide' ? stageHeight : 0,
+								height: displayType === 'slide' ? stageHeight : 0,
 								width: viewportWidth,
 							}}
 							src=""
@@ -813,7 +813,7 @@ const MediaSlide = (props) => {
 							className={styles['mediaslide-double-buffer']}
 							style={{
 								opacity: 0,
-								height: displayType == 'slide' ? stageHeight : 0,
+								height: displayType === 'slide' ? stageHeight : 0,
 								width: viewportWidth,
 							}}
 							src=""
@@ -831,7 +831,7 @@ const MediaSlide = (props) => {
 						width: viewportWidth - currentLeftbarWidth,
 						left: currentLeftbarWidth,
 						height:
-							displayType == 'slide' && stageHeight != 0
+							displayType === 'slide' && stageHeight != 0
 								? (viewportHeight - navbarHeight) * 0.25
 								: viewportHeight - navbarHeight,
 					}}
