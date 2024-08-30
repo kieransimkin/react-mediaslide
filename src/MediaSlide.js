@@ -241,6 +241,14 @@ const MediaSlide = (props) => {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		}
 	};
+    const scroll = () => { 
+        if (displayType != 'slide') {
+            clearTimeout(navbarTimer);
+
+            navbarTimer = setTimeout(hideNavbar, 5000);
+        }
+        setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+    }
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
 			if (!newDisplayType) newDisplayType = displayType;
@@ -452,11 +460,11 @@ const MediaSlide = (props) => {
 						ref={sliderRef}
 						style={{ tableLayout: 'fixed' }}
 						className={styles['mediaslide-' + displayType + '-ul']}
-					>
+					><tbody>
 						{fElement}
 						{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
 						{lElement}
-					</table>
+                    </tbody></table>
 				);
 			} else {
 				items = (
@@ -527,15 +535,13 @@ const MediaSlide = (props) => {
 	useEffect(() => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
-		window.addEventListener('mousemove', mouseMove, true);
-		window.addEventListener('touchmove', mouseMove, true);
-		window.addEventListener('scroll', mouseMove, true);
+		window.document.addEventListener('mousemove', mouseMove, true);
+		portalDiv.current.addEventListener('scroll', scroll, true);
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
-				window.removeEventListener('mousemove', mouseMove, true);
-				window.removeEventListener('touchmove', mouseMove, true);
-				window.removeEventListener('scroll', mouseMove, true);
+				window.document.removeEventListener('mousemove', mouseMove, true);
+				portalDiv.current.removeEventListener('scroll', scroll, true);
 			}
 			clearTimeout(navbarTimer);
 		};
