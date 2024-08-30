@@ -396,63 +396,59 @@ const MediaSlide = (props) => {
 		} else {
 			let lElement, ldElement;
 			if (page < totalPages) {
-				
-					ldElement = (
-						<caption
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadMoreRef}
-						>
-							{loadingIndicator}
-						</caption>
-					);
-				
-					lElement = (
-						<li
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadMoreRef}
-						>
-							{loadingIndicator}
-						</li>
-					);
-				
+				ldElement = (
+					<caption
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadMoreRef}
+					>
+						{loadingIndicator}
+					</caption>
+				);
+
+				lElement = (
+					<li
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadMoreRef}
+					>
+						{loadingIndicator}
+					</li>
+				);
 			}
 			let fElement, fdElement;
 			if (!firstPageLoaded) {
-				
-					fdElement = (
-						<caption
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadPrevRef}
-						>
-							{loadingIndicator}
-						</caption>
-					);
-				
-					fElement = (
-						<li
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadPrevRef}
-						>
-							{loadingIndicator}
-						</li>
-					);
-				
+				fdElement = (
+					<caption
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadPrevRef}
+					>
+						{loadingIndicator}
+					</caption>
+				);
+
+				fElement = (
+					<li
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadPrevRef}
+					>
+						{loadingIndicator}
+					</li>
+				);
 			}
 			if (displayType === 'details') {
 				items = (
