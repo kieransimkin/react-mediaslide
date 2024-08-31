@@ -770,12 +770,16 @@ const MediaSlide = (props) => {
 							>
 								&nbsp;
 							</button>
+                            {
+                                /*
+                            
 							<button className={styles['mediaslide-transport-start']}>⏮</button>
 							<button className={styles['mediaslide-transport-rewind']}>⏪︎</button>
 							<button className={styles['mediaslide-transport-stop']}>⏹︎</button>
 							<button className={styles['mediaslide-transport-play']}>⏵︎</button>
 							<button className={styles['mediaslide-transport-forward']}>⏩︎</button>
 							<button className={styles['mediaslide-transport-end']}>⏭</button>
+                            */ }
 						</div>
 					</label>
 				</nav>
