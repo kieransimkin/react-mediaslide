@@ -27,7 +27,7 @@
   "homepage": "https://kieransimkin.co.uk/mediaslide",
   "author": "Kieran Simkin <382129+kieransimkin@users.noreply.github.com>",
   "license": "BSD-3-Clause-Attribution",
-  "version": "1.0.49",
+  "version": "1.0.50",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
