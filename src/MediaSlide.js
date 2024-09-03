@@ -713,7 +713,17 @@ const MediaSlide = (props) => {
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
 			>
-				<div style={{ position: 'relative', height: 'inherit', top: '0', contain: 'content', overflowY:'scroll' }}>{bigInfo}</div>
+				<div
+					style={{
+						position: 'relative',
+						height: 'inherit',
+						top: '0',
+						contain: 'content',
+						overflowY: 'scroll',
+					}}
+				>
+					{bigInfo}
+				</div>
 			</div>
 			<div
 				className={styles.mediaslide + ' ' + styles['mediaslide-' + displayType]}
