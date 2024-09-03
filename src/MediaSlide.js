@@ -534,16 +534,20 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.document.addEventListener('mousemove', mouseMove, true);
+		window.document.addEventListener('touchmove', mouseMove, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
 		window.addEventListener('scroll', scroll, true);
 		window.addEventListener('wheel', scroll, true);
+		window.addEventListener('touchmove', scroll, true);
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('mousemove', mouseMove, true);
+				window.document.removeEventListener('touchmove', mouseMove, true);
 				portalDiv.current.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('wheel', scroll, true);
+				window.removeEventListener('touchmove', scroll, true);
 			}
 			clearTimeout(navbarTimer);
 		};
@@ -587,7 +591,7 @@ const MediaSlide = (props) => {
 
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
-		if (leftbarOpen && isPortrait()) {
+		if ((leftbarOpen || leftbarWidth > 0) && isPortrait()) {
 			setLeftbarOpen(false);
 			setLeftbarWidth(0);
 		}
@@ -601,10 +605,20 @@ const MediaSlide = (props) => {
 				clickNum = 0;
 
 				setBigInfo('');
-				setLeftbarWidth(defaultLeftbarWidth);
+				if (!isPortrait()) { 
+					setLeftbarWidth(defaultLeftbarWidth);
+
+				} else { 
+					setLeftbarWidth(0);
+				}
 			} else if (leftbarOpen) {
-				setCurrentLeftbarWidth(defaultLeftbarWidth);
-				setLeftbarWidth(defaultLeftbarWidth);
+				if (!isPortrait()) { 
+					setCurrentLeftbarWidth(defaultLeftbarWidth);
+					setLeftbarWidth(defaultLeftbarWidth);
+				} else { 
+					setCurrentLeftbarWidth(0);
+					setLeftbarWidth(0);
+				}
 			}
 			setTimeout(() => {
 				itemClick(selectedItem, e.target.value)({ detail: clickNum });
@@ -640,6 +654,7 @@ const MediaSlide = (props) => {
 	};
 	const slideScroll = (e) => {
 		if (displayType !== 'slide' && displayType !== 'list') return;
+		scroll();
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
 		container.scrollTo({
