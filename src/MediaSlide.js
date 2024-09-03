@@ -706,9 +706,9 @@ const MediaSlide = (props) => {
 				}
 				ref={leftBar}
 				style={{
-					height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
+				
 
-					contain: 'content',
+
 					width: leftbarWidth,
 					height: '100%',
 					left: -(leftbarWidth - currentLeftbarWidth),
@@ -718,7 +718,7 @@ const MediaSlide = (props) => {
 					style={{
 						position: 'relative',
 						height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
-						top: '0',
+						top: navbarHeight,
 						contain: 'content',
 						overflowY: 'scroll',
 					}}
