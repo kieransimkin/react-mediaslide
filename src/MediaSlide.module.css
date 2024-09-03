@@ -33,9 +33,14 @@ section.mediaslide-portal {
 .mediaslide-leftbar { 
     transition: left 0.4s, width 0.4s;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: scroll;
     height: 100%;
     position: absolute;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.mediaslide-leftbar::-webkit-scrollbar {
+    display: none;
 }
 .mediaslide-leftbar-opened { 
     transition: left 0.4s, width 0.4s;
