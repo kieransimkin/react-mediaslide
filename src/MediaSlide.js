@@ -706,6 +706,8 @@ const MediaSlide = (props) => {
 				ref={leftBar}
 				style={{
 					height: navbarHeight > 0 ? viewportHeight-navbarHeight : viewportHeight,
+					top: navbarHeight,
+					contain:'content',
 					width: leftbarWidth,
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
@@ -824,6 +826,7 @@ const MediaSlide = (props) => {
 					className={styles['mediaslide-slide-stage']}
 					style={{
 						height: displayType === 'slide' ? stageHeight : 0,
+						top: navbarHeight,
 						opacity: displayType === 'slide' ? '1' : '0',
 					}}
 				>
