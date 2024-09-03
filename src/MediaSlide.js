@@ -157,6 +157,11 @@ const MediaSlide = (props) => {
 		setCurrentLeftbarWidth(0);
 		setLeftbarOpen(false);
 		setLeftbarOpened(true);
+		clearTimeout(navbarTimer);
+
+			navbarTimer = setTimeout(hideNavbar, 5000);
+		
+		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 	};
 	const goFullscreen = (i) => {
 		return () => {
