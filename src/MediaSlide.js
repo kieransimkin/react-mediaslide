@@ -535,11 +535,15 @@ const MediaSlide = (props) => {
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.document.addEventListener('mousemove', mouseMove, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
+		window.addEventListener('scroll', scroll, true);
+		window.addEventListener('wheel', scroll, true);
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('mousemove', mouseMove, true);
 				portalDiv.current.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('wheel', scroll, true);
 			}
 			clearTimeout(navbarTimer);
 		};
@@ -583,6 +587,10 @@ const MediaSlide = (props) => {
 
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
+		if (leftbarOpen && isPortrait()) { 
+			setLeftbarOpen(false);
+			setLeftbarWidth(0);
+		}
 		if (e.target.value !== 'slide') {
 			setFileBuffer1('');
 			setFileBuffer2('');
