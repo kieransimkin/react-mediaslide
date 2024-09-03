@@ -6,14 +6,15 @@ import Slider from 'react-slider';
 import * as React from 'react';
 
 /**
- * @description Renders a media slide presentation component that displays a gallery
- * of items with various display types (list, details, thumbnails, and slide). It
- * handles navigation, scrolling, and loading more items as needed.
+ * @description Renders a media gallery with customizable display types (list, details,
+ * thumbnails, slide), and features such as pagination, loading indicators, and
+ * keyboard navigation controls. It also includes support for slideshows, double
+ * buffering, and file rendering.
  *
- * @param {any} props - Used to pass data from the parent component to the child component.
+ * @param {object} props - Passed from parent component to child component.
  *
- * @returns {React.ReactElement} A JSX representation of a media slide component
- * containing various elements and props.
+ * @returns {JSX.Element} A React component representing a media slide show with
+ * various display types and interactive features.
  */
 const MediaSlide = (props) => {
 	const {
@@ -44,7 +45,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} width="32" /> {item.title}
+							<img src={item.thumb} width="32" alt={item.title} /> {item.title}
 						</a>
 					</li>
 				);
@@ -67,7 +68,7 @@ const MediaSlide = (props) => {
 							onClick={click(item)}
 						>
 							<a href={item.linkUrl}>
-								<img src={item.thumb} width="64" /> {item.title}
+								<img src={item.thumb} width="64" alt={item.title} /> {item.title}
 							</a>
 						</td>
 					</tr>
@@ -86,7 +87,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} width={ts} />
+							<img src={item.thumb} width={ts} alt={item.title} />
 							<br />
 							{item.title}
 						</a>
@@ -107,7 +108,7 @@ const MediaSlide = (props) => {
 						onClick={click(item)}
 					>
 						<a href={item.linkUrl}>
-							<img src={item.thumb} height={ts - 80} />
+							<img src={item.thumb} height={ts - 80} alt={item.title} />
 							<br />
 							{item.title}
 						</a>
@@ -136,7 +137,7 @@ const MediaSlide = (props) => {
 	const [thumbSize, setThumbSize] = useState(defaultThumbSize || 200);
 	const [thumbSpacing, setThumbSpacing] = useState(defaultThumbSpacing || 0);
 	const [selectedItem, setSelectedItem] = useState(null);
-	const [firstPageLoaded, setFirstPageLoaded] = useState(page == 0);
+	const [firstPageLoaded, setFirstPageLoaded] = useState(page === 0);
 	const [initialPage, setInitialPage] = useState(page);
 	const [leftPageCursor, setLeftPageCursor] = useState(page);
 	const [rightPageCursor, setRightPageCursor] = useState(page);
@@ -164,9 +165,9 @@ const MediaSlide = (props) => {
 			: (viewportHeight - navbarHeight) * 0.75;
 	let navbarTimer = null;
 	/**
-	 * @description Resets the left bar's width to zero, sets it as closed, and marks it
-	 * as previously opened. This likely closes a side panel or menu while keeping track
-	 * of its previous state for possible reopening later.
+	 * @description Sets the current left bar width to 0, closes the left bar by setting
+	 * it to false, and indicates that the left bar has been opened before by setting it
+	 * to true.
 	 */
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
@@ -174,14 +175,14 @@ const MediaSlide = (props) => {
 		setLeftbarOpened(true);
 	};
 	/**
-	 * @description Returns an anonymous function that, when called, sets the `leftbarOpened`
-	 * state to true and the `currentLeftbarWidth` state to 0, then triggers the `itemClick`
-	 * function with parameters `i`, `'slide'`, and `{ detail: 2 }`.
+	 * @description Returns an anonymous function that sets up a sequence of actions to
+	 * put the application into full-screen mode when called. It opens the left bar,
+	 * resets its width, and triggers an item click with specific parameters to initiate
+	 * the transition to full screen.
 	 *
-	 * @param {number} i - Used as an index.
+	 * @param {number} i - Passed to the `itemClick` function.
 	 *
-	 * @returns {Function} A callback that sets two state variables (`leftbarOpened` and
-	 * `currentLeftbarWidth`) and triggers an event named `itemClick`.
+	 * @returns {Function} An anonymous function that performs certain actions when executed.
 	 */
 	const goFullscreen = (i) => {
 		return () => {
@@ -191,36 +192,31 @@ const MediaSlide = (props) => {
 		};
 	};
 	const [bigInfo, setBigInfo] = useState(
-		initialSelection && typeof renderBigInfo == 'function'
+		initialSelection && typeof renderBigInfo === 'function'
 			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen)
 			: null,
 	);
 	const doLoadingTimer = useCallback(() => {
-		// Restarts itself after a timeout if certain conditions are not met.
-
-		if (loadedPages.length == loadingPages.length) {
+		if (loadedPages.length === loadingPages.length) {
 			setLoadingComplete(true);
 			console.log('LOADING complete');
 		} else {
 			setTimeout(() => {
-				// Delays execution.
-
+				// Delays.
 				doLoadingTimer();
 			}, 2000);
 		}
 	}, [loadedPages, loadingPages]);
 	useEffect(() => {
-		// Waits and then loads.
-
+		// Simulates a delay before calling another function.
 		setTimeout(() => {
-			// Delayed execution.
-
+			// Executes with a delay.
 			doLoadingTimer();
 		}, 3000);
 	}, []);
 
 	if (!loadedPages.includes(page)) setLoadedPages([...loadedPages, page]);
-	const currentlyLoading = !(loadedPages.length == loadingPages.length);
+	const currentlyLoading = !(loadedPages.length === loadingPages.length);
 
 	const containerDiv = useRef();
 	const portalDiv = useRef();
@@ -236,9 +232,8 @@ const MediaSlide = (props) => {
 	let useThumbSize = thumbSize;
 
 	useEffect(() => {
-		// Updates state variables and scrolls elements into view when page changes.
-
-		if (page == 0) setFirstPageLoaded(true);
+		// Executes on state changes.
+		if (page === 0) setFirstPageLoaded(true);
 		if (page > initialPage && page > rightPageCursor) {
 			setRightPageCursor(page);
 		} else if (page < initialPage && page < leftPageCursor) {
@@ -263,19 +258,19 @@ const MediaSlide = (props) => {
 			break;
 		case 'slide':
 			itemHTML = slideItemHTML;
-			useThumbSize = stageHeight == 0 ? viewportHeight - navbarHeight : (viewportHeight - navbarHeight) * 0.25;
+			useThumbSize = stageHeight === 0 ? viewportHeight - navbarHeight : (viewportHeight - navbarHeight) * 0.25;
 			break;
 	}
 	/**
-	 * @description Triggers a timer to hide the navigation bar after 5 seconds if the
-	 * mouse cursor is below a certain height (60 pixels) and the display type is not
-	 * 'slide'. It also updates the navbar height accordingly.
+	 * @description Triggers a countdown to hide the navbar when the mouse cursor moves
+	 * down more than 60 pixels from the top of the page while displaying content other
+	 * than slides. It also adjusts the navbar height accordingly.
 	 *
-	 * @param {MouseEvent} e - Used to track mouse movement.
+	 * @param {Event} e - An event object that represents the mouse movement action.
 	 */
 	const mouseMove = (e) => {
 		if (e.clientY < 60) {
-			if (displayType != 'slide') {
+			if (displayType !== 'slide') {
 				clearTimeout(navbarTimer);
 
 				navbarTimer = setTimeout(hideNavbar, 5000);
@@ -284,12 +279,12 @@ const MediaSlide = (props) => {
 		}
 	};
 	/**
-	 * @description Checks if the `displayType` is not 'slide'. If true, it clears a timer
-	 * and sets a new one to call `hideNavbar` after 5000 milliseconds. It also adjusts
-	 * the `navbarHeight` based on the value of `defaultNavbarHidden`.
+	 * @description Clears a timer if the display type is not 'slide', then sets a new
+	 * timer to hide the navbar after 5 seconds. It also updates the navbar height based
+	 * on whether it should be hidden or displayed by default.
 	 */
 	const scroll = () => {
-		if (displayType != 'slide') {
+		if (displayType !== 'slide') {
 			clearTimeout(navbarTimer);
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
@@ -297,48 +292,48 @@ const MediaSlide = (props) => {
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 	};
 	/**
-	 * @description Handles click events on items and updates their display type, selection,
-	 * big info, leftbar width, and scroll position based on the event details. It also
-	 * triggers additional actions such as updating the selected item and calling a
-	 * `selectionChange` callback if necessary.
+	 * @description Returns an event handler that is triggered when a list item is clicked.
+	 * It updates the selected item, changes the display type if necessary, and scrolls
+	 * to or flips the new item based on the click details.
 	 *
-	 * @param {number} i - An item identifier.
+	 * @param {number} i - Related to an item's ID or index.
 	 *
-	 * @param {null} newDisplayType - Used to set display type.
+	 * @param {null} newDisplayType - Used to specify display mode.
 	 *
-	 * @returns {Function} An event handler for item clicks.
+	 * @returns {Function} A callback function that handles click events on items within
+	 * the slider.
 	 */
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
 			if (!newDisplayType) newDisplayType = displayType;
 			if (!i) return;
 
-			if (selectedItem != i || e.detail > 1 || e.detail < 1) {
+			if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
 				if (selectedItem) {
 					sliderRef.current
 						.querySelector('li[data-id="' + selectedItem.id + '"]')
 						?.classList?.remove(styles['mediaslide-item-selected']);
 				}
 				setSelectedItem(i);
-				if (typeof selectionChange == 'function') {
+				if (typeof selectionChange === 'function') {
 					selectionChange(i);
 				}
 				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen));
 
 				let dt = newDisplayType;
-				if (displayType != 'slide' && e.detail > 1) {
+				if (displayType !== 'slide' && e.detail > 1) {
 					dt = 'slide';
 					setDisplayType('slide');
 					//setLeftbarWidth(0);
 					setLeftbarOpened(true);
 					setCurrentLeftbarWidth(0);
 				}
-				if (dt != 'slide' && !leftbarOpen && e.detail > 0) {
+				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
 					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
-				} else if (dt == 'slide' && leftbarOpen && e.detail > 0) {
+				} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
 					//setLeftbarWidth(0);
 
 					setLeftbarOpened(true);
@@ -346,24 +341,39 @@ const MediaSlide = (props) => {
 				sliderRef.current
 					.querySelector('li[data-id="' + i.id + '"]')
 					?.classList?.add(styles['mediaslide-item-selected']);
-				if (dt == 'slide' || e.detail < 1) {
+				if (dt === 'slide' || e.detail < 1) {
 					setTimeout(() => {
-						// Scrolls an element smoothly into view after a delay.
-
+						// Scrolls an element into view after a delay.
 						sliderRef.current
 							.querySelector('li[data-id="' + i.id + '"]')
 							?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 					}, 500);
 				}
-				if (dt == 'slide' || e.detail > 1) {
+				if (dt === 'slide' || e.detail > 1) {
 					flipDoubleBuffer(i, dt);
 				}
 			}
 		};
 	};
 
+	/**
+	 * @description Implements a double buffering system for rendering images, with two
+	 * buffers (doubleBuffer1 and doubleBuffer2) that alternate to display an image without
+	 * flicker. It handles HTML files differently, using a message handler for slide ready
+	 * events.
+	 *
+	 * @param {object} i - An item being processed.
+	 *
+	 * @param {number} dt - Used for time calculations.
+	 */
 	const flipDoubleBuffer = (i, dt) => {
-		if (currentDoubleBuffer == 1) {
+		if (currentDoubleBuffer === 1) {
+			/**
+			 * @description Executes a series of instructions when an image loads. It sets opacity
+			 * to 1 for the current buffer, and opacity to 0 for several other buffers, and then
+			 * removes the event listener from itself after setting the next double buffer as the
+			 * current one.
+			 */
 			const l = () => {
 				if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 1;
 				if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 0;
@@ -373,16 +383,32 @@ const MediaSlide = (props) => {
 				if (doubleBuffer1.current) doubleBuffer1.current.removeEventListener('load', l);
 			};
 
+			/**
+			 * @description Sends a message to all windows, indicating that slides are ready for
+			 * use. The message includes a key-value pair with a request type of 'slideReady'.
+			 * It utilizes the `window.postMessage()` method, specifying '*` as the targetOrigin
+			 * to broadcast the message across all domains.
+			 */
 			const r = () => {
 				window.postMessage({ request: 'slideReady' }, '*');
 			};
 			if (
 				i?.metadata?.files &&
 				i.metadata.files.length > 0 &&
-				i.metadata.files[0]?.mediaType?.substring(0, 9) == 'text/html'
+				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
+				/**
+				 * @description Processes a message received from an external source. It handles two
+				 * cases:
+				 *
+				 * 1/ If the message indicates 'slideReady' status, it updates the opacity and filter
+				 * styles of several DOM elements.
+				 * 2/ It also removes itself as an event listener after processing the message.
+				 *
+				 * @param {Event} e - Used to handle messages from other contexts or windows.
+				 */
 				const messageHandler = (e) => {
-					if (e.data.request == 'slideReady') {
+					if (e.data.request === 'slideReady') {
 						if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity = 1;
 						if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity = 0;
 						if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 0;
@@ -399,6 +425,7 @@ const MediaSlide = (props) => {
 				if (fileDoubleBuffer1) fileDoubleBuffer1.current.style.zIndex = 2;
 				window.addEventListener('message', messageHandler);
 				renderFile(i, r, '100%', stageHeight, mouseMove).then((buf) => {
+					// Handles a promise result, updating a buffer variable with the result.
 					setFileBuffer1(buf);
 				});
 			} else {
@@ -408,6 +435,11 @@ const MediaSlide = (props) => {
 				}
 			}
 		} else {
+			/**
+			 * @description Handles the transition between two double buffers by adjusting their
+			 * opacity, removing event listeners, and updating the current double buffer index
+			 * after a load event is triggered on one of the buffers.
+			 */
 			const l = () => {
 				if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 1;
 				if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 0;
@@ -417,16 +449,29 @@ const MediaSlide = (props) => {
 				if (doubleBuffer2.current) doubleBuffer2.current.removeEventListener('load', l);
 			};
 
+			/**
+			 * @description Sends a message to all windows, indicating that slides are ready, by
+			 * calling the `window.postMessage` method with an object containing the request
+			 * 'slideReady' and setting the target origin to '*' using '*'.
+			 */
 			const r = () => {
 				window.postMessage({ request: 'slideReady' }, '*');
 			};
 			if (
 				i?.metadata?.files &&
 				i.metadata.files.length > 0 &&
-				i.metadata.files[0]?.mediaType?.substring(0, 9) == 'text/html'
+				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
+				/**
+				 * @description Receives messages from another source, specifically checking for a
+				 * request to confirm that a slide is ready. Upon receiving such a message, it adjusts
+				 * the opacity and filter styles of various DOM elements, indicating that one double
+				 * buffer has been replaced by another.
+				 *
+				 * @param {Event} e - Related to an event dispatched by the window's message listener.
+				 */
 				const messageHandler = (e) => {
-					if (e.data.request == 'slideReady') {
+					if (e.data.request === 'slideReady') {
 						if (fileDoubleBuffer2.current) fileDoubleBuffer2.current.style.opacity = 1;
 						if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.opacity = 0;
 						if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 0;
@@ -441,6 +486,7 @@ const MediaSlide = (props) => {
 				if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.zIndex = 1;
 				window.addEventListener('message', messageHandler);
 				renderFile(i, r, '100%', stageHeight, mouseMove).then((buf) => {
+					// Sets file buffer 2.
 					setFileBuffer2(buf);
 				});
 			} else {
@@ -455,79 +501,75 @@ const MediaSlide = (props) => {
 		if (gallery.length < 1) {
 			items = <h1>Not found</h1>;
 		} else {
-			let lElement;
+			let lElement, ldElement;
 			if (page < totalPages) {
-				if (displayType == 'details') {
-					lElement = (
-						<caption
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadMoreRef}
-						>
-							{loadingIndicator}
-						</caption>
-					);
-				} else {
-					lElement = (
-						<li
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadMoreRef}
-						>
-							{loadingIndicator}
-						</li>
-					);
-				}
-			}
-			let fElement;
-			if (!firstPageLoaded) {
-				if (displayType == 'details') {
-					fElement = (
-						<caption
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadPrevRef}
-						>
-							{loadingIndicator}
-						</caption>
-					);
-				} else {
-					fElement = (
-						<li
-							style={{
-								paddingLeft: thumbSpacing,
-								paddingRight: thumbSpacing,
-								paddingBottom: thumbSpacing,
-							}}
-							ref={loadPrevRef}
-						>
-							{loadingIndicator}
-						</li>
-					);
-				}
-			}
-			if (displayType == 'details') {
-				items = (
-					<table
-						ref={sliderRef}
-						style={{ tableLayout: 'fixed' }}
-						className={styles['mediaslide-' + displayType + '-ul']}
+				ldElement = (
+					<div
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadMoreRef}
 					>
-						<tbody>
-							{fElement}
-							{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}
-							{lElement}
-						</tbody>
-					</table>
+						{loadingIndicator}
+					</div>
+				);
+
+				lElement = (
+					<li
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadMoreRef}
+					>
+						{loadingIndicator}
+					</li>
+				);
+			}
+			let fElement, fdElement;
+			if (!firstPageLoaded) {
+				fdElement = (
+					<caption
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadPrevRef}
+					>
+						{loadingIndicator}
+					</caption>
+				);
+
+				fElement = (
+					<li
+						style={{
+							paddingLeft: thumbSpacing,
+							paddingRight: thumbSpacing,
+							paddingBottom: thumbSpacing,
+						}}
+						ref={loadPrevRef}
+					>
+						{loadingIndicator}
+					</li>
+				);
+			}
+			if (displayType === 'details') {
+				items = (
+					<>
+						{fdElement}
+						<table
+							ref={sliderRef}
+							style={{ tableLayout: 'fixed' }}
+							className={styles['mediaslide-' + displayType + '-ul']}
+						>
+							<tbody>{gallery.map(itemHTML(itemClick, useThumbSize, thumbSpacing))}</tbody>
+						</table>
+						{ldElement}
+					</>
 				);
 			} else {
 				items = (
@@ -563,13 +605,14 @@ const MediaSlide = (props) => {
 		}
 	}, [rightPageCursor, totalPages, gallery]);
 	const startOb = useCallback(() => {
-		if (!firstPageLoaded && leftPageCursor != 0 && !loadingContains(leftPageCursor - 1)) {
+		if (!firstPageLoaded && leftPageCursor !== 0 && !loadingContains(leftPageCursor - 1)) {
 			onLoadMoreData({ page: leftPageCursor }, -1);
 			addLoading(leftPageCursor - 1);
 		}
 	}, [leftPageCursor, firstPageLoaded, loadingPages]);
 
 	useEffect(() => {
+		// Observes DOM elements for intersection with viewport.
 		const endObserver = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
 				endOb();
@@ -590,39 +633,50 @@ const MediaSlide = (props) => {
 			endObserver.disconnect();
 			startObserver.disconnect();
 		};
-	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor]);
+	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor, displayType]);
+	/**
+	 * @description Sets the height of the navbar to 0, effectively hiding it from view.
+	 * This is done through the call to the `setNavbarHeight` function, which updates the
+	 * navbar's height value.
+	 */
 	const hideNavbar = () => {
 		setNavbarHeight(0);
 	};
 
 	useEffect(() => {
+		// Sets up and cleans up event listeners.
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.document.addEventListener('mousemove', mouseMove, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
+		window.addEventListener('scroll', scroll, true);
+		window.addEventListener('wheel', scroll, true);
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('mousemove', mouseMove, true);
 				portalDiv.current.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('wheel', scroll, true);
 			}
 			clearTimeout(navbarTimer);
 		};
 	}, []);
 	useEffect(() => {
+		// Sets up an event listener for container size changes.
 		const resizeObserver = new ResizeObserver((event) => {
 			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
 			setViewportHeight(event[0].contentBoxSize[0].blockSize);
 			let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
-			if (leftbarW == 0) return;
+			if (leftbarW === 0) return;
 			if (leftbarW > 600) leftbarW = 600;
 			if (leftbarW < 300) leftbarW = 300;
-			setDefaultLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
-			setLeftbarWidth(isPortrait() ? viewportWidth : leftbarW);
+			setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
 			if (!selectedItem && initialSelection) {
 				//itemClick(initialSelection,'slide')({detail:1})
-				setLeftbarWidth(leftbarW || 300);
-				setCurrentLeftbarWidth(leftbarW || 300);
+				setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+				setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
@@ -635,6 +689,7 @@ const MediaSlide = (props) => {
 		};
 	}, []);
 	useEffect(() => {
+		// Listens for keydown events.
 		const listener = keyDown(sliderRef, displayType);
 		window.addEventListener('keydown', listener);
 		return () => {
@@ -642,18 +697,37 @@ const MediaSlide = (props) => {
 		};
 	}, [displayType]);
 
+	/**
+	 * @description Determines whether the current browser window's height is greater
+	 * than its width, indicating a portrait-oriented display. It returns true if the
+	 * condition is met and false otherwise.
+	 *
+	 * @returns {boolean} True if the device's screen height exceeds its width and false
+	 * otherwise.
+	 */
 	const isPortrait = () => {
 		return window.innerHeight > window.innerWidth;
 	};
 
+	/**
+	 * @description Handles changes to a display type setting based on user input, updating
+	 * related state variables and triggering item click events with delayed timing
+	 * according to specific conditions.
+	 *
+	 * @param {object} e - An event object.
+	 */
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
-		if (e.target.value != 'slide') {
+		if (leftbarOpen && isPortrait()) {
+			setLeftbarOpen(false);
+			setLeftbarWidth(0);
+		}
+		if (e.target.value !== 'slide') {
 			setFileBuffer1('');
 			setFileBuffer2('');
 			let delay = 10;
 			let clickNum = 0;
-			if (leftbarOpen && leftbarWidth == 0) {
+			if (leftbarOpen && leftbarWidth === 0) {
 				delay = 400;
 				clickNum = 0;
 
@@ -664,29 +738,49 @@ const MediaSlide = (props) => {
 				setLeftbarWidth(defaultLeftbarWidth);
 			}
 			setTimeout(() => {
+				// Calls a method after a delay.
 				itemClick(selectedItem, e.target.value)({ detail: clickNum });
 			}, delay);
 		} else {
 			setCurrentLeftbarWidth(0);
 			setTimeout(() => {
+				// Delays execution by 10 milliseconds.
 				itemClick(selectedItem, e.target.value)({ detail: 0 });
 			}, 10);
 		}
 	};
+	/**
+	 * @description Updates a thumb size and displays thumbnails if not already being
+	 * displayed, by calling two separate functions: `setThumbSize` to update the thumb
+	 * size and `setDisplayType` to switch display type to thumbnails.
+	 *
+	 * @param {number} s - Intended to represent thumb size setting.
+	 */
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
-		if (displayType != 'thumbnails') {
+		if (displayType !== 'thumbnails') {
 			setDisplayType('thumbnails');
 		}
 	};
+	/**
+	 * @description Sets thumb spacing and, if the display type is not 'thumbnails', it
+	 * switches to displaying thumbnails. This implies a slideshow-like behavior where
+	 * switching display type changes visual layout to accommodate thumbnail mode.
+	 *
+	 * @param {number} s - Thumb spacing value to be set.
+	 */
 	const thumbSpacingSlide = (s) => {
 		setThumbSpacing(s);
-		if (displayType != 'thumbnails') {
+		if (displayType !== 'thumbnails') {
 			setDisplayType('thumbnails');
 		}
 	};
+	/**
+	 * @description Changes the display type to 'slide' if it is not already set, and
+	 * toggles the fullscreen status between true and false based on its current state.
+	 */
 	const toggleFullscreen = () => {
-		if (displayType != 'slide') {
+		if (displayType !== 'slide') {
 			setDisplayType('slide');
 		}
 		if (isFullscreen) {
@@ -695,8 +789,15 @@ const MediaSlide = (props) => {
 			setIsFullscreen(true);
 		}
 	};
+	/**
+	 * @description Handles scrolling behavior when a touchpad or mouse wheel is used to
+	 * navigate through a list or slide content. It adjusts the scroll position and speed
+	 * based on user input, ensuring smooth navigation within the container element.
+	 *
+	 * @param {WheelEvent} e - Related to mouse wheel events.
+	 */
 	const slideScroll = (e) => {
-		if (displayType != 'slide' && displayType != 'list') return;
+		if (displayType !== 'slide' && displayType !== 'list') return;
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
 		container.scrollTo({
@@ -705,12 +806,43 @@ const MediaSlide = (props) => {
 			behavior: 'instant',
 		});
 	};
+	/**
+	 * @description Selects and clicks the previous sibling element of an element with a
+	 * specific class within an object referenced by `sRef.current`, which is assumed to
+	 * contain HTML elements.
+	 *
+	 * @param {React.RefObject<HTMLElement>} sRef - Intended to reference a DOM element.
+	 *
+	 * @param {string} displayType - Unused.
+	 */
 	const previous = (sRef, displayType) => {
 		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.previousElementSibling.click();
 	};
+	/**
+	 * @description Simulates a click on the next sibling element of an element with class
+	 * 'mediaslide-item-selected' within the current reference (sRef). The next sibling
+	 * is selected based on document order, and it must be the immediate sibling to trigger
+	 * this action.
+	 *
+	 * @param {React.RefObject<HTMLElement>} sRef - Used to reference an HTML element.
+	 *
+	 * @param {string} displayType - Unused in this code snippet.
+	 */
 	const next = (sRef, displayType) => {
 		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.nextElementSibling.click();
 	};
+	/**
+	 * @description Returns an event handler for keydown events on the specified element
+	 * (`sRef`). It checks if the pressed key is 'ArrowLeft' or 'ArrowRight', and calls
+	 * either the `previous` or `next` function, respectively, passing the element reference
+	 * as an argument.
+	 *
+	 * @param {object} sRef - Referred to as a 'selector'. It references or identifies
+	 * an object that needs navigation.
+	 *
+	 * @returns {(Event) => void} A callback function that takes an event object e as
+	 * argument and executes some code when certain conditions are met.
+	 */
 	const keyDown = (sRef) => {
 		return (e) => {
 			switch (e.key) {
@@ -731,7 +863,11 @@ const MediaSlide = (props) => {
 					styles['mediaslide-leftbar'] + (leftbarOpened ? ' ' + styles['mediaslide-leftbar-opened'] : '')
 				}
 				ref={leftBar}
-				style={{ width: leftbarWidth, left: -(leftbarWidth - currentLeftbarWidth) }}
+				style={{
+					height: leftbarWidth == 0 ? 0 : viewportHeight,
+					width: leftbarWidth,
+					left: -(leftbarWidth - currentLeftbarWidth),
+				}}
 			>
 				<div style={{ position: 'relative', top: navbarHeight }}>{bigInfo}</div>
 			</div>
@@ -741,7 +877,11 @@ const MediaSlide = (props) => {
 			>
 				<nav
 					className={styles['mediaslide-nav']}
-					style={{ height: navbarHeight, visibility: navbarHeight == 0 ? 'hidden' : 'visible' }}
+					style={{
+						height: navbarHeight,
+						visibility: navbarHeight === 0 ? 'hidden' : 'visible',
+						transform: viewportWidth < 512 ? 'scale(0.5) translateY(-25%)' : 'none',
+					}}
 				>
 					<label className={styles['mediaslide-nav-displaytype']}>
 						<input
@@ -750,7 +890,7 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="list"
 							onChange={displayTypeChange}
-							checked={displayType == 'list'}
+							checked={displayType === 'list'}
 						/>
 						List
 					</label>
@@ -761,7 +901,7 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="details"
 							onChange={displayTypeChange}
-							checked={displayType == 'details'}
+							checked={displayType === 'details'}
 						/>
 						Details
 					</label>
@@ -772,13 +912,13 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="thumbnails"
 							onChange={displayTypeChange}
-							checked={displayType == 'thumbnails'}
+							checked={displayType === 'thumbnails'}
 						/>
 						Thumbnails
 						<br />
 						<div
 							className={styles['mediaslide-slider-opacity']}
-							style={{ opacity: displayType == 'thumbnails' ? '1' : '0.2' }}
+							style={{ opacity: displayType === 'thumbnails' ? '1' : '0.2' }}
 						>
 							<Slider
 								min={100}
@@ -807,13 +947,13 @@ const MediaSlide = (props) => {
 							name="displayType"
 							value="slide"
 							onChange={displayTypeChange}
-							checked={displayType == 'slide'}
+							checked={displayType === 'slide'}
 						/>
 						Slide
 						<br />
 						<div
 							className={styles['mediaslide-transport-opacity']}
-							style={{ opacity: displayType == 'slide' ? '1' : '0.2' }}
+							style={{ opacity: displayType === 'slide' ? '1' : '0.2' }}
 						>
 							<button
 								onClick={toggleFullscreen}
@@ -827,42 +967,47 @@ const MediaSlide = (props) => {
 							>
 								&nbsp;
 							</button>
+							{/*
+                            
 							<button className={styles['mediaslide-transport-start']}>⏮</button>
 							<button className={styles['mediaslide-transport-rewind']}>⏪︎</button>
 							<button className={styles['mediaslide-transport-stop']}>⏹︎</button>
 							<button className={styles['mediaslide-transport-play']}>⏵︎</button>
 							<button className={styles['mediaslide-transport-forward']}>⏩︎</button>
 							<button className={styles['mediaslide-transport-end']}>⏭</button>
+                            */}
 						</div>
 					</label>
 				</nav>
 				<section
 					className={styles['mediaslide-slide-stage']}
 					style={{
-						height: displayType == 'slide' ? stageHeight : 0,
-						opacity: displayType == 'slide' ? '1' : '0',
+						height: displayType === 'slide' ? stageHeight : 0,
+						opacity: displayType === 'slide' ? '1' : '0',
 					}}
 				>
 					<div className={styles['mediaslide-double-buffer-container']} style={{ opacity: '1' }}>
 						<img
+							alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
 							ref={doubleBuffer1}
-							height={displayType == 'slide' ? stageHeight : 0}
+							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<img
+							alt="Media display window"
 							className={styles['mediaslide-double-buffer']}
 							style={{ opacity: 0 }}
 							src=""
 							ref={doubleBuffer2}
-							height={displayType == 'slide' ? stageHeight : 0}
+							height={displayType === 'slide' ? stageHeight : 0}
 						/>
 						<div
 							className={styles['mediaslide-double-buffer']}
 							style={{
 								opacity: 0,
-								height: displayType == 'slide' ? stageHeight : 0,
+								height: displayType === 'slide' ? stageHeight : 0,
 								width: viewportWidth,
 							}}
 							src=""
@@ -874,7 +1019,7 @@ const MediaSlide = (props) => {
 							className={styles['mediaslide-double-buffer']}
 							style={{
 								opacity: 0,
-								height: displayType == 'slide' ? stageHeight : 0,
+								height: displayType === 'slide' ? stageHeight : 0,
 								width: viewportWidth,
 							}}
 							src=""
@@ -892,7 +1037,7 @@ const MediaSlide = (props) => {
 						width: viewportWidth - currentLeftbarWidth,
 						left: currentLeftbarWidth,
 						height:
-							displayType == 'slide' && stageHeight != 0
+							displayType === 'slide' && stageHeight !== 0
 								? (viewportHeight - navbarHeight) * 0.25
 								: viewportHeight - navbarHeight,
 					}}
