@@ -717,7 +717,7 @@ const MediaSlide = (props) => {
 				<div
 					style={{
 						position: 'relative',
-						height:  navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
+						height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
 						top: '0',
 						contain: 'content',
 						overflowY: 'scroll',
