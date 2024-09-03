@@ -710,7 +710,7 @@ const MediaSlide = (props) => {
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
 			>
-				<div style={{ position: 'relative', top: navbarHeight }}>{bigInfo}</div>
+				<div style={{ position: 'relative', height:'100%', top: navbarHeight}}>{bigInfo}</div>
 			</div>
 			<div
 				className={styles.mediaslide + ' ' + styles['mediaslide-' + displayType]}
