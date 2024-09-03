@@ -706,9 +706,6 @@ const MediaSlide = (props) => {
 				}
 				ref={leftBar}
 				style={{
-				
-
-
 					width: leftbarWidth,
 					height: '100%',
 					left: -(leftbarWidth - currentLeftbarWidth),
