@@ -248,12 +248,13 @@ const MediaSlide = (props) => {
 			navbarTimer = setTimeout(hideNavbar, 5000);
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+		
 	};
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
 			if (!newDisplayType) newDisplayType = displayType;
 			if (!i) return;
-
+			portalDiv.current.focus();
 			if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
 				if (selectedItem) {
 					sliderRef.current
@@ -533,21 +534,34 @@ const MediaSlide = (props) => {
 	useEffect(() => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
-		window.document.addEventListener('mousemove', mouseMove, true);
-		window.document.addEventListener('touchmove', mouseMove, true);
+		window.addEventListener('mousemove', mouseMove, true);
+		
+		window.addEventListener('touchmove', mouseMove, true);
+		window.addEventListener('click', mouseMove, true);
+		window.addEventListener('touchmove', scroll, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
 		window.addEventListener('scroll', scroll, true);
 		window.addEventListener('wheel', scroll, true);
-		window.addEventListener('touchmove', scroll, true);
+		
 		return () => {
 			if (containerDiv.current) {
+				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
+				window.removeEventListener('mousemove', mouseMove, true);
+				
+				window.removeEventListener('touchmove', mouseMove, true);
+				window.removeEventListener('click', mouseMove, true);
+				window.removeEventListener('touchmove', scroll, true);
+				portalDiv.current.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('scroll', scroll, true);
+				window.removeEventListener('wheel', scroll, true);
+				/*
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('touchmove', mouseMove, true);
 				portalDiv.current.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('wheel', scroll, true);
-				window.removeEventListener('touchmove', scroll, true);
+				window.removeEventListener('touchmove', scroll, true);*/
 			}
 			clearTimeout(navbarTimer);
 		};
@@ -592,8 +606,9 @@ const MediaSlide = (props) => {
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
 		if ((leftbarOpen || leftbarWidth > 0) && isPortrait()) {
-			setLeftbarOpen(false);
-			setLeftbarWidth(0);
+			closeBigInfo();
+
+			
 		}
 		if (e.target.value !== 'slide') {
 			setFileBuffer1('');
@@ -608,22 +623,21 @@ const MediaSlide = (props) => {
 				if (!isPortrait()) {
 					setLeftbarWidth(defaultLeftbarWidth);
 				} else {
-					setLeftbarWidth(0);
+					closeBigInfo();
 				}
 			} else if (leftbarOpen) {
 				if (!isPortrait()) {
 					setCurrentLeftbarWidth(defaultLeftbarWidth);
 					setLeftbarWidth(defaultLeftbarWidth);
 				} else {
-					setCurrentLeftbarWidth(0);
-					setLeftbarWidth(0);
+					closeBigInfo();
 				}
 			}
 			setTimeout(() => {
 				itemClick(selectedItem, e.target.value)({ detail: clickNum });
 			}, delay);
 		} else {
-			setCurrentLeftbarWidth(0);
+			closeBigInfo();
 			setTimeout(() => {
 				itemClick(selectedItem, e.target.value)({ detail: 0 });
 			}, 10);
@@ -653,7 +667,7 @@ const MediaSlide = (props) => {
 	};
 	const slideScroll = (e) => {
 		if (displayType !== 'slide' && displayType !== 'list') return;
-		scroll();
+		//scroll();
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
 		container.scrollTo({
