@@ -605,17 +605,16 @@ const MediaSlide = (props) => {
 				clickNum = 0;
 
 				setBigInfo('');
-				if (!isPortrait()) { 
+				if (!isPortrait()) {
 					setLeftbarWidth(defaultLeftbarWidth);
-
-				} else { 
+				} else {
 					setLeftbarWidth(0);
 				}
 			} else if (leftbarOpen) {
-				if (!isPortrait()) { 
+				if (!isPortrait()) {
 					setCurrentLeftbarWidth(defaultLeftbarWidth);
 					setLeftbarWidth(defaultLeftbarWidth);
-				} else { 
+				} else {
 					setCurrentLeftbarWidth(0);
 					setLeftbarWidth(0);
 				}
