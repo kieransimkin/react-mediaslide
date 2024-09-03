@@ -707,13 +707,13 @@ const MediaSlide = (props) => {
 				ref={leftBar}
 				style={{
 					height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
-					top: navbarHeight,
+				
 					contain: 'content',
 					width: leftbarWidth,
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
 			>
-				<div style={{ position: 'relative', height: 'inherit', top: navbarHeight }}>{bigInfo}</div>
+				<div style={{ position: 'relative', height: 'inherit', top: '0',  contain:'content' }}>{bigInfo}</div>
 			</div>
 			<div
 				className={styles.mediaslide + ' ' + styles['mediaslide-' + displayType]}
