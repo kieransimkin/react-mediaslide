@@ -173,8 +173,9 @@ const MediaSlide = (props) => {
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof renderBigInfo === 'function'
 			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen)
-			: null, [initialSelection]
-	) ;
+			: null,
+		[initialSelection],
+	);
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
 			setLoadingComplete(true);
@@ -705,9 +706,9 @@ const MediaSlide = (props) => {
 				}
 				ref={leftBar}
 				style={{
-					height: navbarHeight > 0 ? viewportHeight-navbarHeight : viewportHeight,
+					height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
 					top: navbarHeight,
-					contain:'content',
+					contain: 'content',
 					width: leftbarWidth,
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
