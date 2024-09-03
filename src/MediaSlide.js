@@ -248,7 +248,6 @@ const MediaSlide = (props) => {
 			navbarTimer = setTimeout(hideNavbar, 5000);
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		
 	};
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
@@ -535,19 +534,19 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.addEventListener('mousemove', mouseMove, true);
-		
+
 		window.addEventListener('touchmove', mouseMove, true);
 		window.addEventListener('click', mouseMove, true);
 		window.addEventListener('touchmove', scroll, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
 		window.addEventListener('scroll', scroll, true);
 		window.addEventListener('wheel', scroll, true);
-		
+
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.removeEventListener('mousemove', mouseMove, true);
-				
+
 				window.removeEventListener('touchmove', mouseMove, true);
 				window.removeEventListener('click', mouseMove, true);
 				window.removeEventListener('touchmove', scroll, true);
@@ -607,8 +606,6 @@ const MediaSlide = (props) => {
 		setDisplayType(e.target.value);
 		if ((leftbarOpen || leftbarWidth > 0) && isPortrait()) {
 			closeBigInfo();
-
-			
 		}
 		if (e.target.value !== 'slide') {
 			setFileBuffer1('');
