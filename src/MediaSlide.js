@@ -6,15 +6,15 @@ import Slider from 'react-slider';
 import * as React from 'react';
 
 /**
- * @description Renders a media gallery with customizable display types (list, details,
- * thumbnails, slide), and features such as pagination, loading indicators, and
- * keyboard navigation controls. It also includes support for slideshows, double
- * buffering, and file rendering.
+ * @description Renders a slideshow component with customizable display types, including
+ * list, details, thumbnails, and slide views. It handles navigation, loading, and
+ * rendering of media items, as well as resizing and layout adjustments based on the
+ * viewport width.
  *
- * @param {object} props - Passed from parent component to child component.
+ * @param {object} props - Used for passing data to the component.
  *
- * @returns {JSX.Element} A React component representing a media slide show with
- * various display types and interactive features.
+ * @returns {JSX.Element} A virtual representation of a DOM element and can be rendered
+ * to the browser using a library such as React.
  */
 const MediaSlide = (props) => {
 	const {
@@ -165,9 +165,9 @@ const MediaSlide = (props) => {
 			: (viewportHeight - navbarHeight) * 0.75;
 	let navbarTimer = null;
 	/**
-	 * @description Sets the current left bar width to 0, closes the left bar by setting
-	 * it to false, and indicates that the left bar has been opened before by setting it
-	 * to true.
+	 * @description Resets the left bar's width to zero, closes its open state, and marks
+	 * it as opened in memory for future reference, effectively closing a previously
+	 * expanded left bar section.
 	 */
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
@@ -175,14 +175,15 @@ const MediaSlide = (props) => {
 		setLeftbarOpened(true);
 	};
 	/**
-	 * @description Returns an anonymous function that sets up a sequence of actions to
-	 * put the application into full-screen mode when called. It opens the left bar,
-	 * resets its width, and triggers an item click with specific parameters to initiate
-	 * the transition to full screen.
+	 * @description Returns a closure that sets the left bar to open state and resets its
+	 * width when invoked. It also triggers an item click event with a detail value of
+	 * 2, likely simulating a slide transition. The returned function is memoized for reuse.
 	 *
-	 * @param {number} i - Passed to the `itemClick` function.
+	 * @param {number} i - Referenced by itemClick(i).
 	 *
-	 * @returns {Function} An anonymous function that performs certain actions when executed.
+	 * @returns {Function} A higher-order function that wraps an anonymous function
+	 * containing three statements: setting two state variables and invoking itemClick
+	 * with specific parameters and props.
 	 */
 	const goFullscreen = (i) => {
 		return () => {
@@ -202,15 +203,15 @@ const MediaSlide = (props) => {
 			console.log('LOADING complete');
 		} else {
 			setTimeout(() => {
-				// Delays.
+				// Delays execution.
 				doLoadingTimer();
 			}, 2000);
 		}
 	}, [loadedPages, loadingPages]);
 	useEffect(() => {
-		// Simulates a delay before calling another function.
+		// Sets a timer with a timeout.
 		setTimeout(() => {
-			// Executes with a delay.
+			// Executes another function after a delay.
 			doLoadingTimer();
 		}, 3000);
 	}, []);
@@ -232,7 +233,7 @@ const MediaSlide = (props) => {
 	let useThumbSize = thumbSize;
 
 	useEffect(() => {
-		// Executes on state changes.
+		// Reacts to changes in pagination.
 		if (page === 0) setFirstPageLoaded(true);
 		if (page > initialPage && page > rightPageCursor) {
 			setRightPageCursor(page);
@@ -262,11 +263,11 @@ const MediaSlide = (props) => {
 			break;
 	}
 	/**
-	 * @description Triggers a countdown to hide the navbar when the mouse cursor moves
-	 * down more than 60 pixels from the top of the page while displaying content other
-	 * than slides. It also adjusts the navbar height accordingly.
+	 * @description Sets up a timer to hide the navbar after 5 seconds when the user's
+	 * mouse is not near it, and adjusts its height based on whether it should be hidden
+	 * or visible.
 	 *
-	 * @param {Event} e - An event object that represents the mouse movement action.
+	 * @param {Event} e - An event object.
 	 */
 	const mouseMove = (e) => {
 		if (e.clientY < 60) {
@@ -279,9 +280,9 @@ const MediaSlide = (props) => {
 		}
 	};
 	/**
-	 * @description Clears a timer if the display type is not 'slide', then sets a new
-	 * timer to hide the navbar after 5 seconds. It also updates the navbar height based
-	 * on whether it should be hidden or displayed by default.
+	 * @description Updates the navigation bar's height based on its default hidden state
+	 * and resets a timer to hide the navbar after a delay, depending on the display type
+	 * not being 'slide'.
 	 */
 	const scroll = () => {
 		if (displayType !== 'slide') {
@@ -292,16 +293,16 @@ const MediaSlide = (props) => {
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 	};
 	/**
-	 * @description Returns an event handler that is triggered when a list item is clicked.
-	 * It updates the selected item, changes the display type if necessary, and scrolls
-	 * to or flips the new item based on the click details.
+	 * @description Generates an event handler for item clicks within a slider. It updates
+	 * the selected item, display type, and left bar state based on click details and
+	 * user interactions. It also triggers scrolling, animations, and callback functions
+	 * as needed.
 	 *
-	 * @param {number} i - Related to an item's ID or index.
+	 * @param {object} i - Required for function execution.
 	 *
-	 * @param {null} newDisplayType - Used to specify display mode.
+	 * @param {null} newDisplayType - Optional.
 	 *
-	 * @returns {Function} A callback function that handles click events on items within
-	 * the slider.
+	 * @returns {(Event) => void} A callback function that handles item clicks.
 	 */
 	const itemClick = (i, newDisplayType = null) => {
 		return (e) => {
@@ -357,22 +358,21 @@ const MediaSlide = (props) => {
 	};
 
 	/**
-	 * @description Implements a double buffering system for rendering images, with two
-	 * buffers (doubleBuffer1 and doubleBuffer2) that alternate to display an image without
-	 * flicker. It handles HTML files differently, using a message handler for slide ready
-	 * events.
+	 * @description Flips between two double buffers, rendering a new image or file while
+	 * maintaining a smooth visual transition. It handles different types of media (images
+	 * and HTML files) and uses message passing for asynchronous handling when rendering
+	 * HTML files.
 	 *
-	 * @param {object} i - An item being processed.
+	 * @param {any} i - Used to reference an image or object being processed.
 	 *
-	 * @param {number} dt - Used for time calculations.
+	 * @param {number} dt - Likely representing time, possibly delta time.
 	 */
 	const flipDoubleBuffer = (i, dt) => {
 		if (currentDoubleBuffer === 1) {
 			/**
-			 * @description Executes a series of instructions when an image loads. It sets opacity
-			 * to 1 for the current buffer, and opacity to 0 for several other buffers, and then
-			 * removes the event listener from itself after setting the next double buffer as the
-			 * current one.
+			 * @description Sets up a double buffering system by manipulating opacity and removing
+			 * event listeners. It increases the opacity of one buffer, decreases the opacity of
+			 * others, and switches to another buffer after an image has loaded.
 			 */
 			const l = () => {
 				if (doubleBuffer1.current) doubleBuffer1.current.style.opacity = 1;
@@ -384,10 +384,10 @@ const MediaSlide = (props) => {
 			};
 
 			/**
-			 * @description Sends a message to all windows, indicating that slides are ready for
-			 * use. The message includes a key-value pair with a request type of 'slideReady'.
-			 * It utilizes the `window.postMessage()` method, specifying '*` as the targetOrigin
-			 * to broadcast the message across all domains.
+			 * @description Sends a message to all windows that it is ready for slides. It uses
+			 * the `window.postMessage` method, which allows communication between different
+			 * origins, and specifies that the message should be sent to all windows (`'*'`) with
+			 * the key "request" set to 'slideReady'.
 			 */
 			const r = () => {
 				window.postMessage({ request: 'slideReady' }, '*');
@@ -398,14 +398,12 @@ const MediaSlide = (props) => {
 				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
 				/**
-				 * @description Processes a message received from an external source. It handles two
-				 * cases:
+				 * @description Processes a message event triggered by a web page or frame, specifically
+				 * when it receives the message `'slideReady'`. It updates opacity and filter styles
+				 * for certain elements based on the presence of specific files, then removes itself
+				 * as an event listener.
 				 *
-				 * 1/ If the message indicates 'slideReady' status, it updates the opacity and filter
-				 * styles of several DOM elements.
-				 * 2/ It also removes itself as an event listener after processing the message.
-				 *
-				 * @param {Event} e - Used to handle messages from other contexts or windows.
+				 * @param {Event} e - Related to event handling.
 				 */
 				const messageHandler = (e) => {
 					if (e.data.request === 'slideReady') {
@@ -425,7 +423,7 @@ const MediaSlide = (props) => {
 				if (fileDoubleBuffer1) fileDoubleBuffer1.current.style.zIndex = 2;
 				window.addEventListener('message', messageHandler);
 				renderFile(i, r, '100%', stageHeight, mouseMove).then((buf) => {
-					// Handles a promise result, updating a buffer variable with the result.
+					// Sets a buffer.
 					setFileBuffer1(buf);
 				});
 			} else {
@@ -436,9 +434,10 @@ const MediaSlide = (props) => {
 			}
 		} else {
 			/**
-			 * @description Handles the transition between two double buffers by adjusting their
-			 * opacity, removing event listeners, and updating the current double buffer index
-			 * after a load event is triggered on one of the buffers.
+			 * @description Updates the opacity and removes an event listener for a double buffer
+			 * system. It sets the first double buffer to visible, makes other buffers invisible,
+			 * removes the load event listener from the second double buffer, and calls
+			 * setCurrentDoubleBuffer with argument 1.
 			 */
 			const l = () => {
 				if (doubleBuffer2.current) doubleBuffer2.current.style.opacity = 1;
@@ -450,9 +449,10 @@ const MediaSlide = (props) => {
 			};
 
 			/**
-			 * @description Sends a message to all windows, indicating that slides are ready, by
-			 * calling the `window.postMessage` method with an object containing the request
-			 * 'slideReady' and setting the target origin to '*' using '*'.
+			 * @description Posts a message to all windows with the same origin, sending a `request`
+			 * named `'slideReady'`. This enables communication between different frames or windows
+			 * using the postMessage API. The `*` target specifies that the message should be
+			 * sent to all accessible browsing contexts.
 			 */
 			const r = () => {
 				window.postMessage({ request: 'slideReady' }, '*');
@@ -463,12 +463,12 @@ const MediaSlide = (props) => {
 				i.metadata.files[0]?.mediaType?.substring(0, 9) === 'text/html'
 			) {
 				/**
-				 * @description Receives messages from another source, specifically checking for a
-				 * request to confirm that a slide is ready. Upon receiving such a message, it adjusts
-				 * the opacity and filter styles of various DOM elements, indicating that one double
-				 * buffer has been replaced by another.
+				 * @description Responds to a specific message event, handles opacity changes for
+				 * multiple DOM elements, sets the current double buffer index, and removes itself
+				 * as an event listener after execution. It is likely used in a web application that
+				 * interacts with another process or frame.
 				 *
-				 * @param {Event} e - Related to an event dispatched by the window's message listener.
+				 * @param {Event} e - Related to message events.
 				 */
 				const messageHandler = (e) => {
 					if (e.data.request === 'slideReady') {
@@ -486,7 +486,7 @@ const MediaSlide = (props) => {
 				if (fileDoubleBuffer1.current) fileDoubleBuffer1.current.style.zIndex = 1;
 				window.addEventListener('message', messageHandler);
 				renderFile(i, r, '100%', stageHeight, mouseMove).then((buf) => {
-					// Sets file buffer 2.
+					// Assigns a buffer to file buffer 2.
 					setFileBuffer2(buf);
 				});
 			} else {
@@ -612,7 +612,8 @@ const MediaSlide = (props) => {
 	}, [leftPageCursor, firstPageLoaded, loadingPages]);
 
 	useEffect(() => {
-		// Observes DOM elements for intersection with viewport.
+		// Sets up and manages Intersection Observers to handle page scrolling and loading
+		// more data.
 		const endObserver = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
 				endOb();
@@ -635,35 +636,37 @@ const MediaSlide = (props) => {
 		};
 	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor, displayType]);
 	/**
-	 * @description Sets the height of the navbar to 0, effectively hiding it from view.
-	 * This is done through the call to the `setNavbarHeight` function, which updates the
-	 * navbar's height value.
+	 * @description Sets the height of a navbar to 0, effectively hiding it on the page.
 	 */
 	const hideNavbar = () => {
 		setNavbarHeight(0);
 	};
 
 	useEffect(() => {
-		// Sets up and cleans up event listeners.
+		// Handles various event listeners and timer.
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.document.addEventListener('mousemove', mouseMove, true);
+		window.document.addEventListener('touchmove', mouseMove, true);
 		portalDiv.current.addEventListener('scroll', scroll, true);
 		window.addEventListener('scroll', scroll, true);
 		window.addEventListener('wheel', scroll, true);
+		window.addEventListener('touchmove', scroll, true);
 		return () => {
 			if (containerDiv.current) {
 				containerDiv.current.removeEventListener('mousemove', mouseMove, true);
 				window.document.removeEventListener('mousemove', mouseMove, true);
+				window.document.removeEventListener('touchmove', mouseMove, true);
 				portalDiv.current.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('scroll', scroll, true);
 				window.removeEventListener('wheel', scroll, true);
+				window.removeEventListener('touchmove', scroll, true);
 			}
 			clearTimeout(navbarTimer);
 		};
 	}, []);
 	useEffect(() => {
-		// Sets up an event listener for container size changes.
+		// Observes and handles container div resizing.
 		const resizeObserver = new ResizeObserver((event) => {
 			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
 			setViewportHeight(event[0].contentBoxSize[0].blockSize);
@@ -689,7 +692,7 @@ const MediaSlide = (props) => {
 		};
 	}, []);
 	useEffect(() => {
-		// Listens for keydown events.
+		// Adds and removes an event listener for keydown events on the window object.
 		const listener = keyDown(sliderRef, displayType);
 		window.addEventListener('keydown', listener);
 		return () => {
@@ -698,27 +701,26 @@ const MediaSlide = (props) => {
 	}, [displayType]);
 
 	/**
-	 * @description Determines whether the current browser window's height is greater
-	 * than its width, indicating a portrait-oriented display. It returns true if the
-	 * condition is met and false otherwise.
+	 * @description Determines whether the device's screen orientation is portrait or not
+	 * by comparing the inner height and width of the window. It returns a boolean value
+	 * indicating if the inner height is greater than the inner width.
 	 *
-	 * @returns {boolean} True if the device's screen height exceeds its width and false
-	 * otherwise.
+	 * @returns {boolean} `true` if the device is in portrait orientation and `false` otherwise.
 	 */
 	const isPortrait = () => {
 		return window.innerHeight > window.innerWidth;
 	};
 
 	/**
-	 * @description Handles changes to a display type setting based on user input, updating
-	 * related state variables and triggering item click events with delayed timing
-	 * according to specific conditions.
+	 * @description Updates display type and resets related state variables based on user
+	 * input. It handles layout changes, resets file buffers, and triggers item click
+	 * events with a delay to accommodate animation or other visual effects.
 	 *
-	 * @param {object} e - An event object.
+	 * @param {Event} e - Used to capture event properties.
 	 */
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
-		if (leftbarOpen && isPortrait()) {
+		if ((leftbarOpen || leftbarWidth > 0) && isPortrait()) {
 			setLeftbarOpen(false);
 			setLeftbarWidth(0);
 		}
@@ -732,29 +734,37 @@ const MediaSlide = (props) => {
 				clickNum = 0;
 
 				setBigInfo('');
-				setLeftbarWidth(defaultLeftbarWidth);
+				if (!isPortrait()) {
+					setLeftbarWidth(defaultLeftbarWidth);
+				} else {
+					setLeftbarWidth(0);
+				}
 			} else if (leftbarOpen) {
-				setCurrentLeftbarWidth(defaultLeftbarWidth);
-				setLeftbarWidth(defaultLeftbarWidth);
+				if (!isPortrait()) {
+					setCurrentLeftbarWidth(defaultLeftbarWidth);
+					setLeftbarWidth(defaultLeftbarWidth);
+				} else {
+					setCurrentLeftbarWidth(0);
+					setLeftbarWidth(0);
+				}
 			}
 			setTimeout(() => {
-				// Calls a method after a delay.
+				// Delays execution.
 				itemClick(selectedItem, e.target.value)({ detail: clickNum });
 			}, delay);
 		} else {
 			setCurrentLeftbarWidth(0);
 			setTimeout(() => {
-				// Delays execution by 10 milliseconds.
+				// Delays an action by a specified time period.
 				itemClick(selectedItem, e.target.value)({ detail: 0 });
 			}, 10);
 		}
 	};
 	/**
-	 * @description Updates a thumb size and displays thumbnails if not already being
-	 * displayed, by calling two separate functions: `setThumbSize` to update the thumb
-	 * size and `setDisplayType` to switch display type to thumbnails.
+	 * @description Sets a new thumbnail size and, if not already displaying thumbnails,
+	 * switches to a display type that shows thumbnails.
 	 *
-	 * @param {number} s - Intended to represent thumb size setting.
+	 * @param {number} s - Related to thumbnail size.
 	 */
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
@@ -763,11 +773,10 @@ const MediaSlide = (props) => {
 		}
 	};
 	/**
-	 * @description Sets thumb spacing and, if the display type is not 'thumbnails', it
-	 * switches to displaying thumbnails. This implies a slideshow-like behavior where
-	 * switching display type changes visual layout to accommodate thumbnail mode.
+	 * @description Sets thumb spacing to a specified value and, if the display type is
+	 * not 'thumbnails', it switches the display type to 'thumbnails'.
 	 *
-	 * @param {number} s - Thumb spacing value to be set.
+	 * @param {number} s - Used for spacing.
 	 */
 	const thumbSpacingSlide = (s) => {
 		setThumbSpacing(s);
@@ -776,8 +785,9 @@ const MediaSlide = (props) => {
 		}
 	};
 	/**
-	 * @description Changes the display type to 'slide' if it is not already set, and
-	 * toggles the fullscreen status between true and false based on its current state.
+	 * @description Toggles the display type between 'slide' and any other value, and
+	 * concurrently toggles the full screen status from true to false or vice versa if
+	 * it is currently set.
 	 */
 	const toggleFullscreen = () => {
 		if (displayType !== 'slide') {
@@ -790,14 +800,15 @@ const MediaSlide = (props) => {
 		}
 	};
 	/**
-	 * @description Handles scrolling behavior when a touchpad or mouse wheel is used to
-	 * navigate through a list or slide content. It adjusts the scroll position and speed
-	 * based on user input, ensuring smooth navigation within the container element.
+	 * @description Handles scrolling behavior for a slide or list display type on a touch
+	 * device, scrolling the container when the user interacts with it and adjusting the
+	 * scroll position based on the scroll amount and direction.
 	 *
-	 * @param {WheelEvent} e - Related to mouse wheel events.
+	 * @param {WheelEvent} e - Associated with the wheel event.
 	 */
 	const slideScroll = (e) => {
 		if (displayType !== 'slide' && displayType !== 'list') return;
+		scroll();
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
 		container.scrollTo({
@@ -807,41 +818,39 @@ const MediaSlide = (props) => {
 		});
 	};
 	/**
-	 * @description Selects and clicks the previous sibling element of an element with a
-	 * specific class within an object referenced by `sRef.current`, which is assumed to
-	 * contain HTML elements.
+	 * @description Simulates a click on the previous sibling element of an element with
+	 * a class name matching 'mediaslide-item-selected'. It does so by querying the current
+	 * DOM node referenced by `sRef.current` for such an element and invoking its `click()`
+	 * method if found.
 	 *
-	 * @param {React.RefObject<HTMLElement>} sRef - Intended to reference a DOM element.
+	 * @param {React.RefObject<HTMLDivElement>} sRef - Used to access an HTML element.
 	 *
-	 * @param {string} displayType - Unused.
+	 * @param {string} displayType - Used to identify the selected item.
 	 */
 	const previous = (sRef, displayType) => {
 		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.previousElementSibling.click();
 	};
 	/**
-	 * @description Simulates a click on the next sibling element of an element with class
-	 * 'mediaslide-item-selected' within the current reference (sRef). The next sibling
-	 * is selected based on document order, and it must be the immediate sibling to trigger
-	 * this action.
+	 * @description Navigates to the next media slide by querying the current DOM element,
+	 * finding the selected item class, and programmatically clicking its next sibling
+	 * element if it exists.
 	 *
-	 * @param {React.RefObject<HTMLElement>} sRef - Used to reference an HTML element.
+	 * @param {React.RefObject<HTMLElement>} sRef - Used to select an HTML element.
 	 *
-	 * @param {string} displayType - Unused in this code snippet.
+	 * @param {string} displayType - Unused.
 	 */
 	const next = (sRef, displayType) => {
 		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.nextElementSibling.click();
 	};
 	/**
-	 * @description Returns an event handler for keydown events on the specified element
-	 * (`sRef`). It checks if the pressed key is 'ArrowLeft' or 'ArrowRight', and calls
-	 * either the `previous` or `next` function, respectively, passing the element reference
-	 * as an argument.
+	 * @description Returns a new function that listens for arrow key presses and executes
+	 * either `previous` or `next` functions based on the pressed key, passing the `sRef`
+	 * reference as an argument.
 	 *
-	 * @param {object} sRef - Referred to as a 'selector'. It references or identifies
-	 * an object that needs navigation.
+	 * @param {number} sRef - Likely an array index reference.
 	 *
-	 * @returns {(Event) => void} A callback function that takes an event object e as
-	 * argument and executes some code when certain conditions are met.
+	 * @returns {Function} An event listener that is triggered when a specific key (e.g.,
+	 * ArrowLeft, ArrowRight) is pressed on a keyboard.
 	 */
 	const keyDown = (sRef) => {
 		return (e) => {
