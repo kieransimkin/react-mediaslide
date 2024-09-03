@@ -707,7 +707,7 @@ const MediaSlide = (props) => {
 				ref={leftBar}
 				style={{
 					width: leftbarWidth,
-					height: '100%',
+					height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
 					left: -(leftbarWidth - currentLeftbarWidth),
 				}}
 			>
