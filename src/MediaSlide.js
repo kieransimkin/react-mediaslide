@@ -5,6 +5,16 @@ import styles from './MediaSlide.module.css';
 import Slider from 'react-slider';
 import * as React from 'react';
 
+/**
+ * @description Renders a customizable media gallery component with various display
+ * modes, including list, details, thumbnails, and slide views. It handles pagination,
+ * loading indicators, and user interactions such as clicking and scrolling.
+ *
+ * @param {object} props - Used to pass data to the component.
+ *
+ * @returns {React.ReactElement} A JSX element that represents a Media Slide component
+ * with various navigation and display options.
+ */
 const MediaSlide = (props) => {
 	const {
 		gallery,
@@ -153,6 +163,11 @@ const MediaSlide = (props) => {
 			? viewportHeight - navbarHeight
 			: (viewportHeight - navbarHeight) * 0.75;
 	let navbarTimer = null;
+	/**
+	 * @description Reverses some UI states and scheduling when a large information element
+	 * is closed: resets left bar width, closes it, schedules navbar hiding after a delay,
+	 * and adjusts navbar height based on its default hidden state.
+	 */
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
 		setLeftbarOpen(false);
