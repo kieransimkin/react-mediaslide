@@ -587,7 +587,7 @@ const MediaSlide = (props) => {
 
 	const displayTypeChange = (e) => {
 		setDisplayType(e.target.value);
-		if (leftbarOpen && isPortrait()) { 
+		if (leftbarOpen && isPortrait()) {
 			setLeftbarOpen(false);
 			setLeftbarWidth(0);
 		}
