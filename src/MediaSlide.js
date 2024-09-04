@@ -24,7 +24,7 @@ const MediaSlide = (props) => {
 	} = props;
 
 	let { renderBigInfo, listItemHTML, detailsItemHTML, thumbnailsItemHTML, slideItemHTML } = props;
-
+	
 	if (!listItemHTML) {
 		listItemHTML = (click) => {
 			return (item, s, thumbSpacing) => {
@@ -109,11 +109,14 @@ const MediaSlide = (props) => {
 		};
 	}
 	const leftbarWidthRatio = 0.4;
-	if (!renderBigInfo) {
-		renderBigInfo = (i) => {
-			return <></>;
-		};
+	let doRenderBigInfo = useCallback(() => { 
+		return <></>;
+	},[])
+	if (typeof renderBigInfo == 'function') { 
+		doRenderBigInfo = useCallback(renderBigInfo,[initialSelection, closeBigInfo, goFullscreen, navbarHeight])
 	}
+
+	
 
 	let page = 0,
 		totalPages = 0,
@@ -175,8 +178,8 @@ const MediaSlide = (props) => {
 		};
 	};
 	const [bigInfo, setBigInfo] = useState(
-		initialSelection && typeof renderBigInfo === 'function'
-			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight)
+		initialSelection && typeof doRenderBigInfo === 'function'
+			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight)
 			: null,
 		[initialSelection, navbarHeight],
 	);
@@ -274,7 +277,7 @@ const MediaSlide = (props) => {
 				if (typeof selectionChange === 'function') {
 					selectionChange(i);
 				}
-				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight));
+				setBigInfo(doRenderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight));
 
 				let dt = newDisplayType;
 				if (displayType !== 'slide' && e.detail > 1) {
