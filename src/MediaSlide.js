@@ -110,15 +110,6 @@ const MediaSlide = (props) => {
 	}
 	const leftbarWidthRatio = 0.4;
 
-	const doRenderBigInfo = useCallback(
-		typeof renderBigInfo == 'function'
-			? renderBigInfo
-			: () => {
-					return <></>;
-				},
-		[initialSelection, closeBigInfo, goFullscreen, navbarHeight],
-	);
-
 	let page = 0,
 		totalPages = 0,
 		loadingIndicator = props?.loadingIndicator;
@@ -159,6 +150,7 @@ const MediaSlide = (props) => {
 			? viewportHeight - navbarHeight
 			: (viewportHeight - navbarHeight) * 0.75;
 	let navbarTimer = null;
+	
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
 		setLeftbarOpen(false);
@@ -172,6 +164,14 @@ const MediaSlide = (props) => {
 			onCloseBigInfo(selectedItem);
 		}
 	};
+	const doRenderBigInfo = useCallback(
+		typeof renderBigInfo == 'function'
+			? renderBigInfo
+			: () => {
+					return <></>;
+				},
+		[initialSelection, closeBigInfo, goFullscreen, navbarHeight],
+	);
 	const goFullscreen = (i) => {
 		return () => {
 			closeBigInfo(selectedItem);
