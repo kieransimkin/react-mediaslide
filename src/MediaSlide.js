@@ -150,7 +150,7 @@ const MediaSlide = (props) => {
 			? viewportHeight - navbarHeight
 			: (viewportHeight - navbarHeight) * 0.75;
 	let navbarTimer = null;
-	
+
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
 		setLeftbarOpen(false);
