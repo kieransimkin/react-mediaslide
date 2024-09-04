@@ -16,6 +16,8 @@ const MediaSlide = (props) => {
 		selectionChange,
 		loading,
 		onLoadMoreData,
+		onOpenBigInfo,
+		onCloseBigInfo,
 		renderFile,
 		pagination,
 		initialSelection,
@@ -162,11 +164,13 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+		if (typeof onCloseBigInfo == 'function') { 
+			onCloseBigInfo(selectedItem);
+		}
 	};
 	const goFullscreen = (i) => {
 		return () => {
-			setLeftbarOpened(true);
-			setCurrentLeftbarWidth(0);
+			closeBigInfo(selectedItem);
 			itemClick(i, 'slide')({ detail: 2 });
 		};
 	};
@@ -276,15 +280,27 @@ const MediaSlide = (props) => {
 				if (displayType !== 'slide' && e.detail > 1) {
 					dt = 'slide';
 					setDisplayType('slide');
-					//setLeftbarWidth(0);
+					
+					closeBigInfo();
+					/* setLeftbarWidth(0);
 					setLeftbarOpened(true);
+					setLeftbarOpen(false); // could this be problematic?
 					setCurrentLeftbarWidth(0);
+					if (typeof onCloseBigInfo == 'function') { 
+						onCloseBigInfo(selectedItem);
+					}
+						
+					*/
+
 				}
 				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
 					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
+					if (typeof onOpenBigInfo == 'function') { 
+						onOpenBigInfo(selectedItem);
+					}
 				} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
 					//setLeftbarWidth(0);
 
@@ -588,6 +604,9 @@ const MediaSlide = (props) => {
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
+				if (typeof onOpenBigInfo == 'function') { 
+					onOpenBigInfo(initialSelection);
+				}
 			}
 		});
 		resizeObserver.observe(containerDiv.current);
@@ -909,6 +928,8 @@ MediaSlide.propTypes = {
 	loading: PropTypes.bool.isRequired,
 	defaultDisplayType: PropTypes.string,
 	onLoadMoreData: PropTypes.func.isRequired,
+	onOpenBigInfo: PropTypes.func,
+	onCloseBigInfo: PropTypes.func,
 	pagination: PropTypes.object.isRequired,
 	renderFile: PropTypes.func.isRequired,
 	renderBigInfo: PropTypes.func.isRequired,
