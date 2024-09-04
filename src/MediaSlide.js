@@ -164,7 +164,7 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		if (typeof onCloseBigInfo == 'function') { 
+		if (typeof onCloseBigInfo == 'function') {
 			onCloseBigInfo(selectedItem);
 		}
 	};
@@ -280,7 +280,7 @@ const MediaSlide = (props) => {
 				if (displayType !== 'slide' && e.detail > 1) {
 					dt = 'slide';
 					setDisplayType('slide');
-					
+
 					closeBigInfo();
 					/* setLeftbarWidth(0);
 					setLeftbarOpened(true);
@@ -291,14 +291,13 @@ const MediaSlide = (props) => {
 					}
 						
 					*/
-
 				}
 				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
 					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
-					if (typeof onOpenBigInfo == 'function') { 
+					if (typeof onOpenBigInfo == 'function') {
 						onOpenBigInfo(selectedItem);
 					}
 				} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
@@ -604,7 +603,7 @@ const MediaSlide = (props) => {
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
-				if (typeof onOpenBigInfo == 'function') { 
+				if (typeof onOpenBigInfo == 'function') {
 					onOpenBigInfo(initialSelection);
 				}
 			}
