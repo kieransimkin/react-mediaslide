@@ -172,9 +172,9 @@ const MediaSlide = (props) => {
 	};
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof renderBigInfo === 'function'
-			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen)
+			? renderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight)
 			: null,
-		[initialSelection],
+		[initialSelection,navbarHeight],
 	);
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
@@ -270,7 +270,7 @@ const MediaSlide = (props) => {
 				if (typeof selectionChange === 'function') {
 					selectionChange(i);
 				}
-				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen));
+				setBigInfo(renderBigInfo(i, closeBigInfo, goFullscreen,navbarHeight));
 
 				let dt = newDisplayType;
 				if (displayType !== 'slide' && e.detail > 1) {
