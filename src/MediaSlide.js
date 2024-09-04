@@ -215,8 +215,8 @@ const MediaSlide = (props) => {
 		} else if (page < initialPage && page < leftPageCursor) {
 			setLeftPageCursor(page);
 		}
-		if (sliderRef.current && selectedItem?.id && !loadingComplete) {
-			sliderRef.current
+		if (sliderRef.current && typeof sliderRef.current != 'undefined' && selectedItem?.id && !loadingComplete) {
+			sliderRef?.current
 				.querySelector('li[data-id="' + selectedItem.id + '"]')
 				?.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
 		}
@@ -290,12 +290,12 @@ const MediaSlide = (props) => {
 
 					setLeftbarOpened(true);
 				}
-				sliderRef.current
+				sliderRef?.current
 					.querySelector('li[data-id="' + i.id + '"]')
 					?.classList?.add(styles['mediaslide-item-selected']);
 				if (dt === 'slide' || e.detail < 1) {
 					setTimeout(() => {
-						sliderRef.current
+						sliderRef?.current
 							.querySelector('li[data-id="' + i.id + '"]')
 							?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 					}, 500);
@@ -680,10 +680,10 @@ const MediaSlide = (props) => {
 		});
 	};
 	const previous = (sRef, displayType) => {
-		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.previousElementSibling.click();
+		sRef?.current?.querySelector('.' + styles['mediaslide-item-selected'])?.previousElementSibling.click();
 	};
 	const next = (sRef, displayType) => {
-		sRef.current.querySelector('.' + styles['mediaslide-item-selected'])?.nextElementSibling.click();
+		sRef?.current?.querySelector('.' + styles['mediaslide-item-selected'])?.nextElementSibling.click();
 	};
 	const keyDown = (sRef) => {
 		return (e) => {
@@ -709,15 +709,18 @@ const MediaSlide = (props) => {
 					width: leftbarWidth,
 					height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
 					left: -(leftbarWidth - currentLeftbarWidth),
+					overflowY: 'scroll',
+					transition: 'all 1s',
+					top: navbarHeight,
 				}}
 			>
 				<div
 					style={{
 						position: 'relative',
-						height: navbarHeight > 0 ? viewportHeight - navbarHeight : viewportHeight,
-						top: navbarHeight,
+						
+						height: '-webkit-fill-available',//  WebkitFillAvailable,
 						contain: 'content',
-						overflowY: 'scroll',
+					
 					}}
 				>
 					{bigInfo}
