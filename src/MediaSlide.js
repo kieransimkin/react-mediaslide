@@ -109,12 +109,10 @@ const MediaSlide = (props) => {
 		};
 	}
 	const leftbarWidthRatio = 0.4;
-	let doRenderBigInfo = useCallback(() => { 
-		return <></>;
-	},[])
-	if (typeof renderBigInfo == 'function') { 
-		doRenderBigInfo = useCallback(renderBigInfo,[initialSelection, closeBigInfo, goFullscreen, navbarHeight])
-	}
+	
+	
+	const doRenderBigInfo = useCallback(typeof renderBigInfo == 'function' ? renderBigInfo : useCallback(()=>{return <></>}),[initialSelection, closeBigInfo, goFullscreen, navbarHeight])
+	
 
 	
 
