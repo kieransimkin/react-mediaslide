@@ -164,6 +164,14 @@ const MediaSlide = (props) => {
 			onCloseBigInfo(selectedItem);
 		}
 	};
+	
+	const goFullscreen = (i) => {
+		return () => {
+			closeBigInfo(selectedItem);
+			itemClick(i, 'slide')({ detail: 2 });
+		};
+	};
+	
 	const doRenderBigInfo = useCallback(
 		typeof renderBigInfo == 'function'
 			? renderBigInfo
@@ -172,12 +180,6 @@ const MediaSlide = (props) => {
 				},
 		[initialSelection, closeBigInfo, goFullscreen, navbarHeight],
 	);
-	const goFullscreen = (i) => {
-		return () => {
-			closeBigInfo(selectedItem);
-			itemClick(i, 'slide')({ detail: 2 });
-		};
-	};
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof doRenderBigInfo === 'function'
 			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight)
