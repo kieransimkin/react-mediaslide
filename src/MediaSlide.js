@@ -164,14 +164,14 @@ const MediaSlide = (props) => {
 			onCloseBigInfo(selectedItem);
 		}
 	};
-	
+
 	const goFullscreen = (i) => {
 		return () => {
 			closeBigInfo(selectedItem);
 			itemClick(i, 'slide')({ detail: 2 });
 		};
 	};
-	
+
 	const doRenderBigInfo = useCallback(
 		typeof renderBigInfo == 'function'
 			? renderBigInfo
