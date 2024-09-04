@@ -717,10 +717,9 @@ const MediaSlide = (props) => {
 				<div
 					style={{
 						position: 'relative',
-						
-						height: '-webkit-fill-available',//  WebkitFillAvailable,
+
+						height: '-webkit-fill-available', //  WebkitFillAvailable,
 						contain: 'content',
-					
 					}}
 				>
 					{bigInfo}
