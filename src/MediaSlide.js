@@ -24,7 +24,7 @@ const MediaSlide = (props) => {
 	} = props;
 
 	let { renderBigInfo, listItemHTML, detailsItemHTML, thumbnailsItemHTML, slideItemHTML } = props;
-	
+
 	if (!listItemHTML) {
 		listItemHTML = (click) => {
 			return (item, s, thumbSpacing) => {
@@ -109,12 +109,15 @@ const MediaSlide = (props) => {
 		};
 	}
 	const leftbarWidthRatio = 0.4;
-	
-	
-	const doRenderBigInfo = useCallback(typeof renderBigInfo == 'function' ? renderBigInfo : ()=>{return <></>},[initialSelection, closeBigInfo, goFullscreen, navbarHeight])
-	
 
-	
+	const doRenderBigInfo = useCallback(
+		typeof renderBigInfo == 'function'
+			? renderBigInfo
+			: () => {
+					return <></>;
+				},
+		[initialSelection, closeBigInfo, goFullscreen, navbarHeight],
+	);
 
 	let page = 0,
 		totalPages = 0,
