@@ -153,6 +153,7 @@ const MediaSlide = (props) => {
 
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
+		if (window) window.postMessage({request: 'mediaslide-close-leftbar'},'*');
 		setLeftbarOpen(false);
 		setLeftbarOpened(true);
 		clearTimeout(navbarTimer);
@@ -178,13 +179,13 @@ const MediaSlide = (props) => {
 			: () => {
 					return <></>;
 				},
-		[initialSelection, closeBigInfo, goFullscreen, navbarHeight],
+		[initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen],
 	);
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof doRenderBigInfo === 'function'
-			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight)
+			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen)
 			: null,
-		[initialSelection, navbarHeight],
+		[initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen],
 	);
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
@@ -265,7 +266,7 @@ const MediaSlide = (props) => {
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 	};
-	const itemClick = (i, newDisplayType = null) => {
+	const itemClick = useCallback((i, newDisplayType = null) => {
 		return (e) => {
 			if (!newDisplayType) newDisplayType = displayType;
 			if (!i) return;
@@ -280,7 +281,7 @@ const MediaSlide = (props) => {
 				if (typeof selectionChange === 'function') {
 					selectionChange(i);
 				}
-				setBigInfo(doRenderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight));
+				setBigInfo(doRenderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight,leftbarOpen));
 
 				let dt = newDisplayType;
 				if (displayType !== 'slide' && e.detail > 1) {
@@ -301,6 +302,7 @@ const MediaSlide = (props) => {
 				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
 					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
+					if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
 					setLeftbarOpen(true);
 					setLeftbarOpened(false);
 					if (typeof onOpenBigInfo == 'function') {
@@ -326,7 +328,7 @@ const MediaSlide = (props) => {
 				}
 			}
 		};
-	};
+	},[closeBigInfo, goFullscreen, navbarHeight, leftbarOpen, viewportWidth, defaultLeftbarWidth, onOpenBigInfo, sliderRef.current]);
 
 	const flipDoubleBuffer = (i, dt) => {
 		if (currentDoubleBuffer === 1) {
@@ -606,6 +608,7 @@ const MediaSlide = (props) => {
 				//itemClick(initialSelection,'slide')({detail:1})
 				setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
 				setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+				if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
 				setLeftbarOpen(true);
 				setLeftbarOpened(false);
 				itemClick(initialSelection, 'slide')({ detail: -1 });
@@ -619,7 +622,7 @@ const MediaSlide = (props) => {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, []);
+	}, [leftbarWidthRatio, selectedItem, initialSelection,onOpenBigInfo, containerDiv.current]);
 	useEffect(() => {
 		const listener = keyDown(sliderRef, displayType);
 		window.addEventListener('keydown', listener);
