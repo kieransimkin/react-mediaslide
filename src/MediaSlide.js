@@ -161,6 +161,7 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+		if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
 		if (typeof onCloseBigInfo == 'function') {
 			onCloseBigInfo(selectedItem);
 		}
@@ -256,6 +257,7 @@ const MediaSlide = (props) => {
 				navbarTimer = setTimeout(hideNavbar, 5000);
 			}
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+			if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
 		}
 	};
 	const scroll = () => {
@@ -265,6 +267,7 @@ const MediaSlide = (props) => {
 			navbarTimer = setTimeout(hideNavbar, 5000);
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+		if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
 	};
 	const itemClick = useCallback((i, newDisplayType = null) => {
 		return (e) => {
@@ -557,6 +560,7 @@ const MediaSlide = (props) => {
 	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor, displayType]);
 	const hideNavbar = () => {
 		setNavbarHeight(0);
+		if (window) window.postMessage({request: 'mediaslide-close-navbar'},'*');
 	};
 
 	useEffect(() => {
