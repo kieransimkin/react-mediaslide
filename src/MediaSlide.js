@@ -153,7 +153,7 @@ const MediaSlide = (props) => {
 
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
-		if (window) window.postMessage({request: 'mediaslide-close-leftbar'},'*');
+		if (window) window.postMessage({ request: 'mediaslide-close-leftbar' }, '*');
 		setLeftbarOpen(false);
 		setLeftbarOpened(true);
 		clearTimeout(navbarTimer);
@@ -161,7 +161,8 @@ const MediaSlide = (props) => {
 		navbarTimer = setTimeout(hideNavbar, 5000);
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
+		if (window)
+			window.postMessage({ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar' }, '*');
 		if (typeof onCloseBigInfo == 'function') {
 			onCloseBigInfo(selectedItem);
 		}
@@ -257,7 +258,11 @@ const MediaSlide = (props) => {
 				navbarTimer = setTimeout(hideNavbar, 5000);
 			}
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-			if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
+			if (window)
+				window.postMessage(
+					{ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar' },
+					'*',
+				);
 		}
 	};
 	const scroll = () => {
@@ -267,32 +272,34 @@ const MediaSlide = (props) => {
 			navbarTimer = setTimeout(hideNavbar, 5000);
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		if (window) window.postMessage({request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar'},'*');
+		if (window)
+			window.postMessage({ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar' }, '*');
 	};
-	const itemClick = useCallback((i, newDisplayType = null) => {
-		return (e) => {
-			if (!newDisplayType) newDisplayType = displayType;
-			if (!i) return;
-			portalDiv.current.focus();
-			if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
-				if (selectedItem) {
-					sliderRef.current
-						.querySelector('li[data-id="' + selectedItem.id + '"]')
-						?.classList?.remove(styles['mediaslide-item-selected']);
-				}
-				setSelectedItem(i);
-				if (typeof selectionChange === 'function') {
-					selectionChange(i);
-				}
-				setBigInfo(doRenderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight,leftbarOpen));
+	const itemClick = useCallback(
+		(i, newDisplayType = null) => {
+			return (e) => {
+				if (!newDisplayType) newDisplayType = displayType;
+				if (!i) return;
+				portalDiv.current.focus();
+				if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
+					if (selectedItem) {
+						sliderRef.current
+							.querySelector('li[data-id="' + selectedItem.id + '"]')
+							?.classList?.remove(styles['mediaslide-item-selected']);
+					}
+					setSelectedItem(i);
+					if (typeof selectionChange === 'function') {
+						selectionChange(i);
+					}
+					setBigInfo(doRenderBigInfo(i, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen));
 
-				let dt = newDisplayType;
-				if (displayType !== 'slide' && e.detail > 1) {
-					dt = 'slide';
-					setDisplayType('slide');
+					let dt = newDisplayType;
+					if (displayType !== 'slide' && e.detail > 1) {
+						dt = 'slide';
+						setDisplayType('slide');
 
-					closeBigInfo();
-					/* setLeftbarWidth(0);
+						closeBigInfo();
+						/* setLeftbarWidth(0);
 					setLeftbarOpened(true);
 					setLeftbarOpen(false); // could this be problematic?
 					setCurrentLeftbarWidth(0);
@@ -301,37 +308,48 @@ const MediaSlide = (props) => {
 					}
 						
 					*/
-				}
-				if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
-					setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
-					setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
-					if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
-					setLeftbarOpen(true);
-					setLeftbarOpened(false);
-					if (typeof onOpenBigInfo == 'function') {
-						onOpenBigInfo(selectedItem);
 					}
-				} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
-					//setLeftbarWidth(0);
+					if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
+						setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
+						setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
+						if (window) window.postMessage({ request: 'mediaslide-open-leftbar' }, '*');
+						setLeftbarOpen(true);
+						setLeftbarOpened(false);
+						if (typeof onOpenBigInfo == 'function') {
+							onOpenBigInfo(selectedItem);
+						}
+					} else if (dt === 'slide' && leftbarOpen && e.detail > 0) {
+						//setLeftbarWidth(0);
 
-					setLeftbarOpened(true);
+						setLeftbarOpened(true);
+					}
+					sliderRef?.current
+						.querySelector('li[data-id="' + i.id + '"]')
+						?.classList?.add(styles['mediaslide-item-selected']);
+					if (dt === 'slide' || e.detail < 1) {
+						setTimeout(() => {
+							sliderRef?.current
+								.querySelector('li[data-id="' + i.id + '"]')
+								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+						}, 500);
+					}
+					if (dt === 'slide' || e.detail > 1) {
+						flipDoubleBuffer(i, dt);
+					}
 				}
-				sliderRef?.current
-					.querySelector('li[data-id="' + i.id + '"]')
-					?.classList?.add(styles['mediaslide-item-selected']);
-				if (dt === 'slide' || e.detail < 1) {
-					setTimeout(() => {
-						sliderRef?.current
-							.querySelector('li[data-id="' + i.id + '"]')
-							?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-					}, 500);
-				}
-				if (dt === 'slide' || e.detail > 1) {
-					flipDoubleBuffer(i, dt);
-				}
-			}
-		};
-	},[closeBigInfo, goFullscreen, navbarHeight, leftbarOpen, viewportWidth, defaultLeftbarWidth, onOpenBigInfo, sliderRef.current]);
+			};
+		},
+		[
+			closeBigInfo,
+			goFullscreen,
+			navbarHeight,
+			leftbarOpen,
+			viewportWidth,
+			defaultLeftbarWidth,
+			onOpenBigInfo,
+			sliderRef.current,
+		],
+	);
 
 	const flipDoubleBuffer = (i, dt) => {
 		if (currentDoubleBuffer === 1) {
@@ -560,7 +578,7 @@ const MediaSlide = (props) => {
 	}, [loadMoreRef.current, loadPrevRef.current, page, leftPageCursor, rightPageCursor, displayType]);
 	const hideNavbar = () => {
 		setNavbarHeight(0);
-		if (window) window.postMessage({request: 'mediaslide-close-navbar'},'*');
+		if (window) window.postMessage({ request: 'mediaslide-close-navbar' }, '*');
 	};
 
 	useEffect(() => {
@@ -598,35 +616,38 @@ const MediaSlide = (props) => {
 			clearTimeout(navbarTimer);
 		};
 	}, []);
-	const resizeHandler = useCallback((event) => {
-		setViewportWidth(event[0].contentBoxSize[0].inlineSize);
-		setViewportHeight(event[0].contentBoxSize[0].blockSize);
-		let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
-		if (leftbarW === 0) return;
-		if (leftbarW > 600) leftbarW = 600;
-		if (leftbarW < 300) leftbarW = 300;
-		setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
-		setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
-		if (!selectedItem && initialSelection) {
-			//itemClick(initialSelection,'slide')({detail:1})
-			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
-			setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
-			if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
-			setLeftbarOpen(true);
-			setLeftbarOpened(false);
-			itemClick(initialSelection, 'slide')({ detail: -1 });
-			if (typeof onOpenBigInfo == 'function') {
-				onOpenBigInfo(initialSelection);
+	const resizeHandler = useCallback(
+		(event) => {
+			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
+			setViewportHeight(event[0].contentBoxSize[0].blockSize);
+			let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
+			if (leftbarW === 0) return;
+			if (leftbarW > 600) leftbarW = 600;
+			if (leftbarW < 300) leftbarW = 300;
+			setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+			if (!selectedItem && initialSelection) {
+				//itemClick(initialSelection,'slide')({detail:1})
+				setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+				setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+				if (window) window.postMessage({ request: 'mediaslide-open-leftbar' }, '*');
+				setLeftbarOpen(true);
+				setLeftbarOpened(false);
+				itemClick(initialSelection, 'slide')({ detail: -1 });
+				if (typeof onOpenBigInfo == 'function') {
+					onOpenBigInfo(initialSelection);
+				}
 			}
-		}
-	},[leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo]);
+		},
+		[leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo],
+	);
 	useEffect(() => {
-		const resizeObserver = new ResizeObserver( resizeHandler);
+		const resizeObserver = new ResizeObserver(resizeHandler);
 		resizeObserver.observe(containerDiv.current);
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [leftbarWidthRatio, selectedItem, initialSelection,onOpenBigInfo, containerDiv.current]);
+	}, [leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo, containerDiv.current]);
 	useEffect(() => {
 		const listener = keyDown(sliderRef, displayType);
 		window.addEventListener('keydown', listener);
