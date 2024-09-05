@@ -742,6 +742,7 @@ const MediaSlide = (props) => {
 		//scroll();
 		const container = portalDiv.current;
 		const scrollAmount = e.deltaY / 1.5;
+		scroll();
 		container.scrollTo({
 			top: 0,
 			left: container.scrollLeft + scrollAmount,
