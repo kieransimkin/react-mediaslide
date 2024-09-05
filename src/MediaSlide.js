@@ -131,7 +131,7 @@ const MediaSlide = (props) => {
 
 	const [viewportWidth, setViewportWidth] = useState(100);
 	const [leftbarWidth, setLeftbarWidth] = useState(0);
-	const [leftbarOpen, setLeftbarOpen] = useState(false);
+	const [leftbarOpen, setLeftbarOpen] = useState(initialSelection ? true : false);
 	const [leftbarOpened, setLeftbarOpened] = useState(false);
 	const [defaultLeftbarWidth, setDefaultLeftbarWidth] = useState(0);
 	const [currentLeftbarWidth, setCurrentLeftbarWidth] = useState(0);
@@ -594,31 +594,31 @@ const MediaSlide = (props) => {
 			clearTimeout(navbarTimer);
 		};
 	}, []);
-	useEffect(() => {
-		const resizeObserver = new ResizeObserver((event) => {
-			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
-			setViewportHeight(event[0].contentBoxSize[0].blockSize);
-			let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
-			if (leftbarW === 0) return;
-			if (leftbarW > 600) leftbarW = 600;
-			if (leftbarW < 300) leftbarW = 300;
-			setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
-			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
-			if (!selectedItem && initialSelection) {
-				//itemClick(initialSelection,'slide')({detail:1})
-				setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
-				setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
-				if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
-				setLeftbarOpen(true);
-				setLeftbarOpened(false);
-				itemClick(initialSelection, 'slide')({ detail: -1 });
-				if (typeof onOpenBigInfo == 'function') {
-					onOpenBigInfo(initialSelection);
-				}
+	const resizeHandler = useCallback((event) => {
+		setViewportWidth(event[0].contentBoxSize[0].inlineSize);
+		setViewportHeight(event[0].contentBoxSize[0].blockSize);
+		let leftbarW = event[0].contentBoxSize[0].inlineSize * leftbarWidthRatio;
+		if (leftbarW === 0) return;
+		if (leftbarW > 600) leftbarW = 600;
+		if (leftbarW < 300) leftbarW = 300;
+		setDefaultLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+		setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW);
+		if (!selectedItem && initialSelection) {
+			//itemClick(initialSelection,'slide')({detail:1})
+			setLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+			setCurrentLeftbarWidth(isPortrait() ? event[0].contentBoxSize[0].inlineSize : leftbarW || 300);
+			if (window) window.postMessage({request: 'mediaslide-open-leftbar'},'*');
+			setLeftbarOpen(true);
+			setLeftbarOpened(false);
+			itemClick(initialSelection, 'slide')({ detail: -1 });
+			if (typeof onOpenBigInfo == 'function') {
+				onOpenBigInfo(initialSelection);
 			}
-		});
+		}
+	},[leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo]);
+	useEffect(() => {
+		const resizeObserver = new ResizeObserver( resizeHandler);
 		resizeObserver.observe(containerDiv.current);
-
 		return () => {
 			resizeObserver.disconnect();
 		};
