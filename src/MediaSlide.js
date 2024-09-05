@@ -162,7 +162,13 @@ const MediaSlide = (props) => {
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
-			window.postMessage({ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar', navbarHeight: (defaultNavbarHidden ? 0 : 60) }, '*');
+			window.postMessage(
+				{
+					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+					navbarHeight: defaultNavbarHidden ? 0 : 60,
+				},
+				'*',
+			);
 		if (typeof onCloseBigInfo == 'function') {
 			onCloseBigInfo(selectedItem);
 		}
@@ -260,7 +266,10 @@ const MediaSlide = (props) => {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
-					{ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar', navbarHeight: (defaultNavbarHidden ? 0 : 60) },
+					{
+						request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+						navbarHeight: defaultNavbarHidden ? 0 : 60,
+					},
 					'*',
 				);
 		}
@@ -273,7 +282,13 @@ const MediaSlide = (props) => {
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
-			window.postMessage({ request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar', navbarHeight: defaultNavbarHidden ? 0 : 60}, '*');
+			window.postMessage(
+				{
+					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+					navbarHeight: defaultNavbarHidden ? 0 : 60,
+				},
+				'*',
+			);
 	};
 	const itemClick = useCallback(
 		(i, newDisplayType = null) => {
