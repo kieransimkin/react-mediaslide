@@ -326,7 +326,7 @@ const MediaSlide = (props) => {
 					} else {
 						if (window) window.postMessage({ request: 'mediaslide-open-leftbar' }, '*');
 					}
-					if (dt !== 'slide' && !leftbarOpen && e.detail > 0) {
+					if (dt !== 'slide' && !leftbarOpen && e.detail >= 0) {
 						setLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 						setCurrentLeftbarWidth(isPortrait() ? viewportWidth : defaultLeftbarWidth || 300);
 
