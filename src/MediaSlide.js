@@ -348,16 +348,15 @@ const MediaSlide = (props) => {
 							sliderRef?.current
 								.querySelector('li[data-id="' + i.id + '"]')
 								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-								setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-								if (window)
-									window.postMessage(
-										{
-											request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
-											navbarHeight: defaultNavbarHidden ? 0 : 60,
-										},
-										'*',
-									);
-									
+							setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+							if (window)
+								window.postMessage(
+									{
+										request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+										navbarHeight: defaultNavbarHidden ? 0 : 60,
+									},
+									'*',
+								);
 						}, 500);
 					}
 					if (dt === 'slide' || e.detail > 1) {
