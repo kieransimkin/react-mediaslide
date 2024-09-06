@@ -296,7 +296,7 @@ const MediaSlide = (props) => {
 				if (!newDisplayType) newDisplayType = displayType;
 				if (!i) return;
 				portalDiv.current.focus();
-				if (selectedItem !== i || e.detail > 1 || e.detail < 1) {
+				if (selectedItem !== i || e.detail > 1 || e.detail < 1 || e.detail === 0) {
 					if (selectedItem) {
 						sliderRef.current
 							.querySelector('li[data-id="' + selectedItem.id + '"]')
