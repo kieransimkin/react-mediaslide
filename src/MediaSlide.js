@@ -353,6 +353,7 @@ const MediaSlide = (props) => {
 					if (dt === 'slide' || e.detail > 1) {
 						flipDoubleBuffer(i, dt);
 					}
+					setNavbarHeight(defaultNavbarHidden ? 0 : 60)
 				}
 			};
 		},
@@ -714,6 +715,7 @@ const MediaSlide = (props) => {
 				itemClick(selectedItem, e.target.value)({ detail: 0 });
 			}, 10);
 		}
+		setNavbarHeight(defaultNavbarHidden ? 0 : 60)
 	};
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
