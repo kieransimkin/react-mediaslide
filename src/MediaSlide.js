@@ -343,9 +343,10 @@ const MediaSlide = (props) => {
 						?.classList?.add(styles['mediaslide-item-selected']);
 					if (dt === 'slide' || e.detail < 1) {
 						setTimeout(() => {
-							sliderRef?.current
+							/*sliderRef?.current
 								.querySelector('li[data-id="' + i.id + '"]')
 								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+								*/
 							clearTimeout(navbarTimer);
 
 							navbarTimer = setTimeout(hideNavbar, 5000);
