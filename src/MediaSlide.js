@@ -258,11 +258,10 @@ const MediaSlide = (props) => {
 	}
 	const mouseMove = (e) => {
 		if (e.clientY < 60) {
-			
-				clearTimeout(navbarTimer);
+			clearTimeout(navbarTimer);
 
-				navbarTimer = setTimeout(hideNavbar, 5000);
-			
+			navbarTimer = setTimeout(hideNavbar, 5000);
+
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
@@ -275,11 +274,10 @@ const MediaSlide = (props) => {
 		}
 	};
 	const scroll = () => {
-		
 		clearTimeout(navbarTimer);
 
 		navbarTimer = setTimeout(hideNavbar, 5000);
-		
+
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
 			window.postMessage(
