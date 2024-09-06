@@ -354,7 +354,14 @@ const MediaSlide = (props) => {
 						flipDoubleBuffer(i, dt);
 					}
 					setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-					if (window) window.postMessage({ request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar', navbarHeight: defaultNavbarHidden ? 0 : 60 }, '*');
+					if (window)
+						window.postMessage(
+							{
+								request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+								navbarHeight: defaultNavbarHidden ? 0 : 60,
+							},
+							'*',
+						);
 				}
 			};
 		},
@@ -717,7 +724,14 @@ const MediaSlide = (props) => {
 			}, 10);
 		}
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		if (window) window.postMessage({ request: 'mediaslide-'+(defaultNavbarHidden ? 'close' : 'open')+'-navbar', navbarHeight: defaultNavbarHidden ? 0 : 60 }, '*');
+		if (window)
+			window.postMessage(
+				{
+					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+					navbarHeight: defaultNavbarHidden ? 0 : 60,
+				},
+				'*',
+			);
 	};
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
