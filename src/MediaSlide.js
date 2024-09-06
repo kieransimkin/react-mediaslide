@@ -258,11 +258,11 @@ const MediaSlide = (props) => {
 	}
 	const mouseMove = (e) => {
 		if (e.clientY < 60) {
-			if (displayType !== 'slide') {
+			
 				clearTimeout(navbarTimer);
 
 				navbarTimer = setTimeout(hideNavbar, 5000);
-			}
+			
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
@@ -275,11 +275,11 @@ const MediaSlide = (props) => {
 		}
 	};
 	const scroll = () => {
-		if (displayType !== 'slide') {
-			clearTimeout(navbarTimer);
+		
+		clearTimeout(navbarTimer);
 
-			navbarTimer = setTimeout(hideNavbar, 5000);
-		}
+		navbarTimer = setTimeout(hideNavbar, 5000);
+		
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
 			window.postMessage(
@@ -348,6 +348,9 @@ const MediaSlide = (props) => {
 							sliderRef?.current
 								.querySelector('li[data-id="' + i.id + '"]')
 								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+							clearTimeout(navbarTimer);
+
+							navbarTimer = setTimeout(hideNavbar, 5000);
 							setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 							if (window)
 								window.postMessage(
@@ -362,6 +365,8 @@ const MediaSlide = (props) => {
 					if (dt === 'slide' || e.detail > 1) {
 						flipDoubleBuffer(i, dt);
 					}
+					clearTimeout(navbarTimer);
+					navbarTimer = setTimeout(hideNavbar, 5000);
 					setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 					if (window)
 						window.postMessage(
@@ -732,6 +737,8 @@ const MediaSlide = (props) => {
 				itemClick(selectedItem, e.target.value)({ detail: 0 });
 			}, 10);
 		}
+		clearTimeout(navbarTimer);
+		navbarTimer = setTimeout(hideNavbar, 5000);
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
 			window.postMessage(
