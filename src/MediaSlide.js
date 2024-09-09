@@ -192,7 +192,7 @@ const MediaSlide = (props) => {
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof doRenderBigInfo === 'function'
 			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen)
-			: null
+			: null,
 	);
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
@@ -261,7 +261,7 @@ const MediaSlide = (props) => {
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
 
-			if (navbarHeight!=defaultNavbarHidden ? 0 : 60) { 
+			if (navbarHeight != defaultNavbarHidden ? 0 : 60) {
 				setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 				if (window)
 					window.postMessage(
@@ -278,7 +278,7 @@ const MediaSlide = (props) => {
 		clearTimeout(navbarTimer);
 
 		navbarTimer = setTimeout(hideNavbar, 5000);
-		if (navbarHeight!=defaultNavbarHidden ? 0 : 60) { 
+		if (navbarHeight != defaultNavbarHidden ? 0 : 60) {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
