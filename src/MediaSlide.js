@@ -274,11 +274,11 @@ const MediaSlide = (props) => {
 			}
 		}
 	};
-	const scroll = useCallback( ()=>{
+	const scroll = useCallback(() => {
 		clearTimeout(navbarTimer);
 
 		navbarTimer = setTimeout(hideNavbar, 5000);
-		console.log(navbarHeight, (defaultNavbarHidden?0:60))
+		console.log(navbarHeight, defaultNavbarHidden ? 0 : 60);
 		if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
@@ -290,7 +290,7 @@ const MediaSlide = (props) => {
 					'*',
 				);
 		}
-	},[]);
+	}, []);
 	const itemClick = useCallback(
 		(i, newDisplayType = null) => {
 			return (e) => {
