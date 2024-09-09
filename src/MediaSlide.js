@@ -276,11 +276,12 @@ const MediaSlide = (props) => {
 			}
 		}
 	},[navbarHeight]);
-	const scroll = useCallback(() => {
+	const scroll = useCallback((e) => {
 		clearTimeout(navbarTimer);
 
 		navbarTimer = setTimeout(hideNavbar, 5000);
 		console.log(navbarHeight, defaultNavbarHidden ? 0 : 60);
+		console.log(e);
 		if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
