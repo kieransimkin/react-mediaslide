@@ -261,6 +261,24 @@ const MediaSlide = (props) => {
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
 
+			if (navbarHeight!=defaultNavbarHidden ? 0 : 60) { 
+				setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+				if (window)
+					window.postMessage(
+						{
+							request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+							navbarHeight: defaultNavbarHidden ? 0 : 60,
+						},
+						'*',
+					);
+			}
+		}
+	};
+	const scroll = () => {
+		clearTimeout(navbarTimer);
+
+		navbarTimer = setTimeout(hideNavbar, 5000);
+		if (navbarHeight!=defaultNavbarHidden ? 0 : 60) { 
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
@@ -271,21 +289,6 @@ const MediaSlide = (props) => {
 					'*',
 				);
 		}
-	};
-	const scroll = () => {
-		clearTimeout(navbarTimer);
-
-		navbarTimer = setTimeout(hideNavbar, 5000);
-
-		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-		if (window)
-			window.postMessage(
-				{
-					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
-					navbarHeight: defaultNavbarHidden ? 0 : 60,
-				},
-				'*',
-			);
 	};
 	const itemClick = useCallback(
 		(i, newDisplayType = null) => {
