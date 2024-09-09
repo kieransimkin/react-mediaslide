@@ -187,13 +187,13 @@ const MediaSlide = (props) => {
 			: () => {
 					return <></>;
 				},
-		[initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen],
+		[initialSelection, closeBigInfo, goFullscreen, leftbarOpen],
 	);
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof doRenderBigInfo === 'function'
 			? doRenderBigInfo(initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen)
 			: null,
-		[initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen],
+		[initialSelection, closeBigInfo, goFullscreen, leftbarOpen],
 	);
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
