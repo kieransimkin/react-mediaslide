@@ -187,7 +187,7 @@ const MediaSlide = (props) => {
 			: () => {
 					return <></>;
 				},
-		[true],
+		[initialSelection, closeBigInfo, goFullscreen, navbarHeight, leftbarOpen],
 	);
 	const [bigInfo, setBigInfo] = useState(
 		initialSelection && typeof doRenderBigInfo === 'function'
@@ -255,7 +255,7 @@ const MediaSlide = (props) => {
 			useThumbSize = stageHeight === 0 ? viewportHeight - navbarHeight : (viewportHeight - navbarHeight) * 0.25;
 			break;
 	}
-	const mouseMove = (e) => {
+	const mouseMove = useCallback((e) => {
 		if (e.clientY < 60) {
 			clearTimeout(navbarTimer);
 
@@ -273,7 +273,7 @@ const MediaSlide = (props) => {
 					);
 			}
 		}
-	};
+	},[navbarHeight]);
 	const scroll = useCallback(() => {
 		clearTimeout(navbarTimer);
 
@@ -390,6 +390,9 @@ const MediaSlide = (props) => {
 			defaultLeftbarWidth,
 			onOpenBigInfo,
 			sliderRef.current,
+			doRenderBigInfo,
+			scroll,
+			mouseMove
 		],
 	);
 
@@ -681,7 +684,7 @@ const MediaSlide = (props) => {
 				}
 			}
 		},
-		[leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo],
+		[leftbarWidthRatio, selectedItem, initialSelection, onOpenBigInfo, itemClick,leftbarWidthRatio],
 	);
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver(resizeHandler);
@@ -702,7 +705,7 @@ const MediaSlide = (props) => {
 		return window.innerHeight > window.innerWidth;
 	};
 
-	const displayTypeChange = (e) => {
+	const displayTypeChange = useCallback((e) => {
 		setDisplayType(e.target.value);
 		if ((leftbarOpen || leftbarWidth > 0) && isPortrait()) {
 			closeBigInfo();
@@ -750,7 +753,7 @@ const MediaSlide = (props) => {
 				},
 				'*',
 			);
-	};
+	},[leftbarOpen, selectedItem, leftbarWidth, closeBigInfo, itemClick]);
 	const thumbSizeSlide = (s) => {
 		setThumbSize(s);
 		if (displayType !== 'thumbnails') {
@@ -773,7 +776,7 @@ const MediaSlide = (props) => {
 			setIsFullscreen(true);
 		}
 	};
-	const slideScroll = (e) => {
+	const slideScroll = useCallback((e) => {
 		if (displayType !== 'slide' && displayType !== 'list') return;
 		//scroll();
 		const container = portalDiv.current;
@@ -784,7 +787,7 @@ const MediaSlide = (props) => {
 			left: container.scrollLeft + scrollAmount,
 			behavior: 'instant',
 		});
-	};
+	},[portalDiv.current, scroll]);
 	const previous = (sRef, displayType) => {
 		sRef?.current?.querySelector('.' + styles['mediaslide-item-selected'])?.previousElementSibling.click();
 	};
