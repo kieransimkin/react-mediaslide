@@ -345,11 +345,12 @@ const MediaSlide = (props) => {
 						.querySelector('li[data-id="' + i.id + '"]')
 						?.classList?.add(styles['mediaslide-item-selected']);
 					if ((dt === 'slide'  && e.detail > 0 ) || e.detail < 0) {
+						/*
 						setTimeout(() => {
 							/*sliderRef?.current
 								.querySelector('li[data-id="' + i.id + '"]')
 								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-								*/
+								
 							clearTimeout(navbarTimer);
 
 							navbarTimer = setTimeout(hideNavbar, 5000);
@@ -362,7 +363,7 @@ const MediaSlide = (props) => {
 									},
 									'*',
 								);
-						}, 500);
+						}, 500);*/
 					}
 					if (dt === 'slide' || e.detail > 1) {
 						flipDoubleBuffer(i, dt);
