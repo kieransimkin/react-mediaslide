@@ -368,17 +368,19 @@ const MediaSlide = (props) => {
 					if (dt === 'slide' || e.detail > 1) {
 						flipDoubleBuffer(i, dt);
 					}
-					clearTimeout(navbarTimer);
-					navbarTimer = setTimeout(hideNavbar, 5000);
-					setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-					if (window)
-						window.postMessage(
-							{
-								request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
-								navbarHeight: defaultNavbarHidden ? 0 : 60,
-							},
-							'*',
-						);
+					if (e.detail !== 0) {
+						clearTimeout(navbarTimer);
+						navbarTimer = setTimeout(hideNavbar, 5000);
+						setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+						if (window)
+							window.postMessage(
+								{
+									request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+									navbarHeight: defaultNavbarHidden ? 0 : 60,
+								},
+								'*',
+							);
+					}
 				}
 			};
 		},
