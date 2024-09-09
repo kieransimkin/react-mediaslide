@@ -344,7 +344,7 @@ const MediaSlide = (props) => {
 					sliderRef?.current
 						.querySelector('li[data-id="' + i.id + '"]')
 						?.classList?.add(styles['mediaslide-item-selected']);
-					if (dt === 'slide' || e.detail < 1) {
+					if ((dt === 'slide'  && e.detail > 0 ) || e.detail < 0) {
 						setTimeout(() => {
 							/*sliderRef?.current
 								.querySelector('li[data-id="' + i.id + '"]')
