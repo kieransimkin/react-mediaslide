@@ -284,9 +284,13 @@ const MediaSlide = (props) => {
 			clearTimeout(navbarTimer);
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
-			console.log(navbarHeight, defaultNavbarHidden ? 0 : 60);
-			console.log(e);
-			if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
+			
+			
+			if (typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') { 
+				return;
+			}
+			//if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
+			
 				setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 				if (window)
 					window.postMessage(
@@ -297,7 +301,7 @@ const MediaSlide = (props) => {
 						},
 						'*',
 					);
-			}
+			//}
 		},
 		[navbarHeight],
 	);
@@ -308,7 +312,7 @@ const MediaSlide = (props) => {
 				if (!i) return;
 				portalDiv.current.focus();
 				if (selectedItem !== i || e.detail > 1 || e.detail < 1 || e.detail === 0) {
-					if (selectedItem) {
+					if (sliderRef.current && typeof sliderRef.current != 'undefined' && selectedItem?.id) {
 						sliderRef.current
 							.querySelector('li[data-id="' + selectedItem.id + '"]')
 							?.classList?.remove(styles['mediaslide-item-selected']);
@@ -351,9 +355,11 @@ const MediaSlide = (props) => {
 
 						setLeftbarOpened(true);
 					}
+					if (sliderRef.current && typeof sliderRef.current != 'undefined') {
 					sliderRef?.current
 						.querySelector('li[data-id="' + i.id + '"]')
 						?.classList?.add(styles['mediaslide-item-selected']);
+					}
 					if ((dt === 'slide' && e.detail > 0) || e.detail < 0) {
 						/*
 						setTimeout(() => {
