@@ -274,7 +274,7 @@ const MediaSlide = (props) => {
 			}
 		}
 	};
-	const scroll = () => {
+	const scroll = useCallback( ()=>{
 		clearTimeout(navbarTimer);
 
 		navbarTimer = setTimeout(hideNavbar, 5000);
@@ -290,7 +290,7 @@ const MediaSlide = (props) => {
 					'*',
 				);
 		}
-	};
+	},[navbarHeight,defaultNavbarHidden]);
 	const itemClick = useCallback(
 		(i, newDisplayType = null) => {
 			return (e) => {
