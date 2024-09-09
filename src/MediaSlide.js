@@ -290,7 +290,7 @@ const MediaSlide = (props) => {
 					'*',
 				);
 		}
-	}, []);
+	}, [navbarHeight]);
 	const itemClick = useCallback(
 		(i, newDisplayType = null) => {
 			return (e) => {
@@ -657,7 +657,7 @@ const MediaSlide = (props) => {
 			}
 			clearTimeout(navbarTimer);
 		};
-	}, []);
+	}, [scroll, mouseMove, containerDiv.current]);
 	const resizeHandler = useCallback(
 		(event) => {
 			setViewportWidth(event[0].contentBoxSize[0].inlineSize);
