@@ -284,23 +284,22 @@ const MediaSlide = (props) => {
 			clearTimeout(navbarTimer);
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
-			
-			
-			if (typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') { 
+
+			if (typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') {
 				return;
 			}
 			//if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
-			
-				setNavbarHeight(defaultNavbarHidden ? 0 : 60);
-				if (window)
-					window.postMessage(
-						{
-							request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
-							navbarHeight: defaultNavbarHidden ? 0 : 60,
-							location: 'scroll',
-						},
-						'*',
-					);
+
+			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
+			if (window)
+				window.postMessage(
+					{
+						request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
+						navbarHeight: defaultNavbarHidden ? 0 : 60,
+						location: 'scroll',
+					},
+					'*',
+				);
 			//}
 		},
 		[navbarHeight],
@@ -356,9 +355,9 @@ const MediaSlide = (props) => {
 						setLeftbarOpened(true);
 					}
 					if (sliderRef.current && typeof sliderRef.current != 'undefined') {
-					sliderRef?.current
-						.querySelector('li[data-id="' + i.id + '"]')
-						?.classList?.add(styles['mediaslide-item-selected']);
+						sliderRef?.current
+							.querySelector('li[data-id="' + i.id + '"]')
+							?.classList?.add(styles['mediaslide-item-selected']);
 					}
 					if ((dt === 'slide' && e.detail > 0) || e.detail < 0) {
 						/*
