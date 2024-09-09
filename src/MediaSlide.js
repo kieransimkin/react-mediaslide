@@ -166,6 +166,7 @@ const MediaSlide = (props) => {
 				{
 					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
 					navbarHeight: defaultNavbarHidden ? 0 : 60,
+					location: 'closeBigInfo'
 				},
 				'*',
 			);
@@ -268,6 +269,7 @@ const MediaSlide = (props) => {
 						{
 							request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
 							navbarHeight: defaultNavbarHidden ? 0 : 60,
+							location:'mouseMove'
 						},
 						'*',
 					);
@@ -286,6 +288,7 @@ const MediaSlide = (props) => {
 					{
 						request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
 						navbarHeight: defaultNavbarHidden ? 0 : 60,
+						location: 'scroll'
 					},
 					'*',
 				);
@@ -377,6 +380,7 @@ const MediaSlide = (props) => {
 								{
 									request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
 									navbarHeight: defaultNavbarHidden ? 0 : 60,
+									location: 'itemClick'
 								},
 								'*',
 							);
@@ -753,6 +757,7 @@ const MediaSlide = (props) => {
 				{
 					request: 'mediaslide-' + (defaultNavbarHidden ? 'close' : 'open') + '-navbar',
 					navbarHeight: defaultNavbarHidden ? 0 : 60,
+					location: 'displayType'
 				},
 				'*',
 			);
