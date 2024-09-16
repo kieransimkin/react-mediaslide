@@ -285,7 +285,7 @@ const MediaSlide = (props) => {
 
 			navbarTimer = setTimeout(hideNavbar, 5000);
 
-			if (typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') {
+			if (typeof e == 'undefined' || typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') {
 				return;
 			}
 			//if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
