@@ -804,7 +804,7 @@ const MediaSlide = (props) => {
 			if (displayType !== 'slide' && displayType !== 'list') return;
 			//scroll();
 			const container = portalDiv.current;
-			if (typeof e.deltaY != 'undefined') {
+			if (typeof e != 'undefined' && typeof e.deltaY != 'undefined') {
 				const scrollAmount = e.deltaY / 1.5;
 				scroll();
 				container.scrollTo({
