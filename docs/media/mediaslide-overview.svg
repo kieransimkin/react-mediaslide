@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Generated MediaSlide capability overview</title>
+  <desc id="desc">One media collection flows into list, details, thumbnails and slide views, with selection detail and pagination.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#11142d"/><stop offset="1" stop-color="#32184b"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#53e0cf"/></marker>
+  </defs>
+  <rect width="1400" height="760" rx="40" fill="url(#bg)"/>
+  <text x="70" y="95" fill="#fff" font-family="Verdana,sans-serif" font-size="54" font-weight="700">MediaSlide</text>
+  <text x="72" y="140" fill="#d5c8ee" font-family="Verdana,sans-serif" font-size="23">Responsive media browsing for React · generated architecture illustration</text>
+  <rect x="70" y="215" width="260" height="250" rx="28" fill="#1c2345" stroke="#8172ff" stroke-width="3"/>
+  <text x="105" y="280" fill="#fff" font-family="Verdana,sans-serif" font-size="30" font-weight="700">Collection</text>
+  <text x="105" y="330" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="21">images · HTML media</text>
+  <text x="105" y="372" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="21">stable IDs · metadata</text>
+  <text x="105" y="414" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="21">previous / next pages</text>
+  <path d="M345 340H470" stroke="#53e0cf" stroke-width="8" marker-end="url(#arrow)"/>
+  <g font-family="Verdana,sans-serif" text-anchor="middle">
+    <rect x="490" y="205" width="210" height="120" rx="24" fill="#2b3566"/><text x="595" y="277" fill="#fff" font-size="27">List</text>
+    <rect x="730" y="205" width="210" height="120" rx="24" fill="#2b3566"/><text x="835" y="277" fill="#fff" font-size="27">Details</text>
+    <rect x="490" y="355" width="210" height="120" rx="24" fill="#2b3566"/><text x="595" y="427" fill="#fff" font-size="27">Thumbnails</text>
+    <rect x="730" y="355" width="210" height="120" rx="24" fill="#6e3fc1"/><text x="835" y="427" fill="#fff" font-size="27">Slide stage</text>
+  </g>
+  <path d="M960 340H1060" stroke="#53e0cf" stroke-width="8" marker-end="url(#arrow)"/>
+  <rect x="1080" y="215" width="250" height="250" rx="28" fill="#1c2345" stroke="#8172ff" stroke-width="3"/>
+  <text x="1115" y="280" fill="#fff" font-family="Verdana,sans-serif" font-size="29" font-weight="700">Interaction</text>
+  <text x="1115" y="330" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="20">selection detail</text>
+  <text x="1115" y="370" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="20">custom renderers</text>
+  <text x="1115" y="410" fill="#cec9e8" font-family="Verdana,sans-serif" font-size="20">keyboard · touch · wheel</text>
+  <rect x="225" y="565" width="950" height="96" rx="48" fill="#10152f" stroke="#53e0cf" stroke-width="2"/>
+  <text x="700" y="623" fill="#fff" font-family="Verdana,sans-serif" font-size="25" text-anchor="middle">One responsive component · application-owned data and visual adapters</text>
+</svg>
