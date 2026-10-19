@@ -149,16 +149,15 @@ const MediaSlide = (props) => {
 		: isFullscreen
 			? viewportHeight - navbarHeight
 			: (viewportHeight - navbarHeight) * 0.75;
-	let navbarTimer = null;
-	console.log('Redrawing mediaslide');
+	const navbarTimer = useRef(null);
 	const closeBigInfo = () => {
 		setCurrentLeftbarWidth(0);
 		if (window) window.postMessage({ request: 'mediaslide-close-leftbar' }, '*');
 		setLeftbarOpen(false);
 		setLeftbarOpened(true);
-		clearTimeout(navbarTimer);
+		clearTimeout(navbarTimer.current);
 
-		navbarTimer = setTimeout(hideNavbar, 5000);
+		navbarTimer.current = setTimeout(hideNavbar, 5000);
 
 		setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 		if (window)
@@ -198,7 +197,6 @@ const MediaSlide = (props) => {
 	const doLoadingTimer = useCallback(() => {
 		if (loadedPages.length === loadingPages.length) {
 			setLoadingComplete(true);
-			console.log('LOADING complete');
 		} else {
 			setTimeout(() => {
 				doLoadingTimer();
@@ -211,7 +209,9 @@ const MediaSlide = (props) => {
 		}, 3000);
 	}, []);
 
-	if (!loadedPages.includes(page)) setLoadedPages([...loadedPages, page]);
+	useEffect(() => {
+		setLoadedPages((current) => (current.includes(page) ? current : [...current, page]));
+	}, [page]);
 	const currentlyLoading = !(loadedPages.length === loadingPages.length);
 
 	const containerDiv = useRef();
@@ -259,9 +259,9 @@ const MediaSlide = (props) => {
 	const mouseMove = useCallback(
 		(e) => {
 			if (e.clientY < 60) {
-				clearTimeout(navbarTimer);
+				clearTimeout(navbarTimer.current);
 
-				navbarTimer = setTimeout(hideNavbar, 5000);
+				navbarTimer.current = setTimeout(hideNavbar, 5000);
 
 				if (navbarHeight != (defaultNavbarHidden ? 0 : 60)) {
 					setNavbarHeight(defaultNavbarHidden ? 0 : 60);
@@ -281,9 +281,9 @@ const MediaSlide = (props) => {
 	);
 	const scroll = useCallback(
 		(e) => {
-			clearTimeout(navbarTimer);
+			clearTimeout(navbarTimer.current);
 
-			navbarTimer = setTimeout(hideNavbar, 5000);
+			navbarTimer.current = setTimeout(hideNavbar, 5000);
 
 			if (typeof e == 'undefined' || typeof e.deltaY == 'undefined' || typeof e.deltaX == 'undefined') {
 				return;
@@ -366,9 +366,9 @@ const MediaSlide = (props) => {
 								.querySelector('li[data-id="' + i.id + '"]')
 								?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 								
-							clearTimeout(navbarTimer);
+							clearTimeout(navbarTimer.current);
 
-							navbarTimer = setTimeout(hideNavbar, 5000);
+							navbarTimer.current = setTimeout(hideNavbar, 5000);
 							setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 							if (window)
 								window.postMessage(
@@ -384,8 +384,8 @@ const MediaSlide = (props) => {
 						flipDoubleBuffer(i, dt);
 					}
 					if (e.detail !== 0) {
-						clearTimeout(navbarTimer);
-						navbarTimer = setTimeout(hideNavbar, 5000);
+						clearTimeout(navbarTimer.current);
+						navbarTimer.current = setTimeout(hideNavbar, 5000);
 						setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 						if (window)
 							window.postMessage(
@@ -646,7 +646,7 @@ const MediaSlide = (props) => {
 	};
 
 	useEffect(() => {
-		navbarTimer = setTimeout(hideNavbar, 5000);
+		navbarTimer.current = setTimeout(hideNavbar, 5000);
 		containerDiv.current.addEventListener('mousemove', mouseMove, true);
 		window.addEventListener('mousemove', mouseMove, true);
 
@@ -677,7 +677,7 @@ const MediaSlide = (props) => {
 				window.removeEventListener('wheel', scroll, true);
 				window.removeEventListener('touchmove', scroll, true);*/
 			}
-			clearTimeout(navbarTimer);
+			clearTimeout(navbarTimer.current);
 		};
 	}, [scroll, mouseMove, containerDiv.current]);
 	const resizeHandler = useCallback(
@@ -762,8 +762,8 @@ const MediaSlide = (props) => {
 					itemClick(selectedItem, e.target.value)({ detail: 0 });
 				}, 10);
 			}
-			clearTimeout(navbarTimer);
-			navbarTimer = setTimeout(hideNavbar, 5000);
+			clearTimeout(navbarTimer.current);
+			navbarTimer.current = setTimeout(hideNavbar, 5000);
 			setNavbarHeight(defaultNavbarHidden ? 0 : 60);
 			if (window)
 				window.postMessage(
