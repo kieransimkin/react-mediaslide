@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import MediaSlide from '../src/MediaSlide';
 import './style.css';
@@ -19,10 +19,18 @@ function App() {
   const [requests, setRequests] = useState([]);
   const [mode, setMode] = useState('thumbnails');
   const gallery = media.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const move = (direction) => {
+
+  // Edge sentinels can be visible immediately in the large deterministic test
+  // viewport. Record component pagination requests, but let the explicit demo
+  // controls apply page changes so the harness cannot race itself.
+  const recordRequest = useCallback((direction) => {
     setRequests((old) => [...old, direction]);
+  }, []);
+  const move = useCallback((direction) => {
+    recordRequest(direction);
     setPage((old) => Math.max(0, Math.min(2, old + (direction === 'left' || direction === 'previous' ? -1 : 1))));
-  };
+  }, [recordRequest]);
+
   const renderer = (click) => (item) => <li key={item.id} data-id={item.id} onClick={click(item)} className="custom-tile" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') click(item)({ detail: 1 }); }}><img src={item.thumb} alt=""/><strong>{item.title}</strong><small>{item.metadata.palette} · custom renderer</small></li>;
   return <main>
     <header><h1>MediaSlide <span>component laboratory</span></h1><p>Local SVG fixtures · deterministic pagination · real component</p></header>
@@ -39,7 +47,7 @@ function App() {
       <MediaSlide key={mode} gallery={gallery} loading={false} pagination={{page,totalPages:2}}
         defaultDisplayType={mode} defaultNavbarHidden={false}
         selectionChange={item => setSelection(item.id)}
-        onLoadMoreData={(_, direction) => move(direction)}
+        onLoadMoreData={(_, direction) => recordRequest(direction)}
         renderBigInfo={(item) => <article className="info"><h2>{item.title}</h2><p>{item.metadata.palette} study</p></article>}
         renderFile={async () => null}
         {...(custom ? { thumbnailsItemHTML: renderer } : {})}/>
