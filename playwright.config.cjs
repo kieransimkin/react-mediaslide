@@ -1,0 +1,2 @@
+const { defineConfig } = require('@playwright/test');
+module.exports = defineConfig({ testDir: './tests/browser', timeout: 30000, use: { baseURL: 'http://127.0.0.1:4173', browserName: 'chromium', viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' }, webServer: { command: 'npx vite --config demo/vite.config.mjs', url: 'http://127.0.0.1:4173', reuseExistingServer: !process.env.CI, timeout: 60000 }, reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]], outputDir: 'test-results' });

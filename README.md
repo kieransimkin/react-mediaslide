@@ -1,5 +1,11 @@
 # MediaSlide
 
+## Deterministic browser demonstration
+
+The [self-contained browser demo](demo/README.md) uses local SVG fixtures and the real React component. It covers all four modes, selection, custom rendering and pagination. The **Browser demo** GitHub Actions workflow captures genuine Chromium screenshots and test reports as artifacts.
+
+Follow the [demo instructions](demo/README.md) to run it locally.
+
 MediaSlide is a responsive React media browser with four coordinated presentation modes, selection detail, extensible renderers and bidirectional pagination. The npm package and repository remain `react-mediaslide`; the canonical product name is **MediaSlide**.
 
 ![Generated MediaSlide overview showing collection, view modes and interaction](docs/media/mediaslide-overview.svg)
