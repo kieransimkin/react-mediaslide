@@ -18,6 +18,16 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run check
       - run: npx playwright test
+      - name: Build self-contained WordPress plugin
+        run: npx vite build --config wordpress/vite.config.mjs
+      - name: Package WordPress plugin
+        run: cd wordpress && zip -r mediaslide-wordpress.zip mediaslide/
+      - name: Upload installable WordPress plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: mediaslide-wordpress
+          path: wordpress/mediaslide-wordpress.zip
+          retention-days: 30
       - name: Build GitHub Pages demo
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:

@@ -1,0 +1,5 @@
+.mediaslide-wp{position:relative;width:100%;min-height:240px;overflow:hidden;isolation:isolate}
+.mediaslide-wp *{box-sizing:border-box}
+.mediaslide-wp-item{display:flex;flex-direction:column;gap:6px;align-items:center;cursor:pointer;background:transparent;border:0;color:inherit}
+.mediaslide-wp-item img{max-width:100%;height:auto;object-fit:contain}
+.mediaslide-wp-info{padding:20px}
