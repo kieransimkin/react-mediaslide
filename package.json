@@ -13,7 +13,8 @@
     "globals": "^15.9.0",
     "jslint": "^0.12.1",
     "prettier": "^3.3.3",
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -49,8 +50,18 @@
     "url": "https://github.com/kieransimkin/react-mediaslide/issues"
   },
   "description": "Responsive React media browser with list, details, thumbnail and slide views, extensible renderers and bidirectional pagination.",
-  "keywords": ["react", "media-gallery", "slideshow", "responsive", "danceflow"],
-  "files": ["dist", "README.md", "LICENSE"],
+  "keywords": [
+    "react",
+    "media-gallery",
+    "slideshow",
+    "responsive",
+    "danceflow"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "peerDependencies": {
     "react": ">=18 <20"
   }
