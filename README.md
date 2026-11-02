@@ -99,6 +99,15 @@ Read [the people-and-agent ecosystem guide](docs/ECOSYSTEM.md) and [contribution
 - Stage expansion is component fullscreen, not the browser Fullscreen API.
 - Default item links navigate when activated. Supply custom renderers when selection should not navigate.
 
+## Cross-platform repository bytes
+
+The root `.gitattributes` stores and checks out text as LF on every platform;
+declared binary media, archives, fonts and native libraries remain byte-exact.
+Package hashes therefore do not depend on `core.autocrlf`.
+
+This repository-byte policy has no interface whose screenshot or video would add
+verification value. `git ls-files --eol`, package checks and CI are the evidence.
+
 ## Licence
 
 BSD 3-Clause Attribution. See [LICENSE](LICENSE).
