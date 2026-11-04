@@ -28,16 +28,13 @@
   "homepage": "https://kieransimkin.co.uk/mediaslide",
   "author": "Kieran Simkin <382129+kieransimkin@users.noreply.github.com>",
   "license": "BSD-3-Clause-Attribution",
-  "version": "1.1.26",
+  "version": "1.1.27",
   "main": "dist/index.js",
   "scripts": {
     "test": "node tests/package.test.cjs",
     "build": "node scripts/clean.cjs && cross-env NODE_ENV=production babel src --out-dir dist --copy-files",
     "prepare": "npm run build",
     "prepublishOnly": "npm run check",
-    "preversion": "npm run check",
-    "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags",
     "format": "prettier --write \"src/**/*.js\"",
     "lint": "eslint \"src/*.js\"",
     "check": "npm run lint && npm test && npm run build"
