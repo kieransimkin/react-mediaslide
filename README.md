@@ -111,3 +111,9 @@ verification value. `git ls-files --eol`, package checks and CI are the evidence
 ## Licence
 
 BSD 3-Clause Attribution. See [LICENSE](LICENSE).
+
+## Releases
+
+Use [npm](https://www.npmjs.com/package/react-mediaslide) for the current registry package and [GitHub Releases](https://github.com/kieransimkin/react-mediaslide/releases) for versioned tarballs and checksums. Compare versions before choosing an install route.
+
+A fresh version tag runs the tests and packages the build once. The [release workflow](.github/workflows/release.yml) attaches that tarball to GitHub and publishes the same bytes through npm trusted publishing. The npm package owner must register the GitHub workflow filename `release.yml` as a trusted publisher before the first automated npm release.
