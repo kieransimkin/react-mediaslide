@@ -117,3 +117,5 @@ BSD 3-Clause Attribution. See [LICENSE](LICENSE).
 Use [npm](https://www.npmjs.com/package/react-mediaslide) for the current registry package and [GitHub Releases](https://github.com/kieransimkin/react-mediaslide/releases) for versioned tarballs and checksums. Compare versions before choosing an install route.
 
 A fresh version tag runs the tests and packages the build once. The [release workflow](.github/workflows/release.yml) attaches that tarball to GitHub and publishes the same bytes through npm trusted publishing. The npm package owner must register the GitHub workflow filename `release.yml` as a trusted publisher before the first automated npm release.
+
+The npm verification job waits up to ten minutes for the exact version to appear and checks its integrity against the release tarball. If npm has accepted the upload and verification times out, rerun the failed `npm-verify` job. A full rerun checks the existing GitHub assets and skips the npm upload when the published tarball matches. An integrity mismatch stops the workflow.

@@ -4,6 +4,9 @@ on:
     tags: ['v*']
 permissions:
   contents: read
+concurrency:
+  group: mediaslide-release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   pack:
     runs-on: ubuntu-latest
@@ -38,16 +41,31 @@ jobs:
         with:
           name: mediaslide-release
       - run: sha256sum --check SHA256SUMS.txt
-      - name: Publish the verified tarball and checksum
+      - name: Create or verify the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" ./*.tgz SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes
+        run: |
+          tarball="react-mediaslide-${GITHUB_REF_NAME#v}.tgz"
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+              --pattern "$tarball" --pattern SHA256SUMS.txt --dir existing
+            cmp "$tarball" "existing/$tarball"
+            cmp SHA256SUMS.txt existing/SHA256SUMS.txt
+          else
+            gh release create "$GITHUB_REF_NAME" "$tarball" SHA256SUMS.txt \
+              --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes
+          fi
   npm:
     needs: [pack, github]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
+      contents: read
       id-token: write
     steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
@@ -56,16 +74,30 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: mediaslide-release
-      - run: sha256sum --check SHA256SUMS.txt
-      - name: Publish and read back the same package
+          path: release
+      - run: cd release && sha256sum --check SHA256SUMS.txt
+      - name: Publish only if the version is absent
         run: |
-          archive=$(find . -maxdepth 1 -name '*.tgz' -print)
-          npm publish "$archive" --ignore-scripts --access public
-          expected="sha512-$(openssl dgst -sha512 -binary "$archive" | openssl base64 -A)"
-          for attempt in 1 2 3 4 5; do
-            actual=$(npm view "react-mediaslide@${GITHUB_REF_NAME#v}" dist.integrity || true)
-            if [ "$actual" = "$expected" ]; then exit 0; fi
-            sleep 5
-          done
-          echo "The npm integrity did not match the published release tarball" >&2
-          exit 1
+          version="${GITHUB_REF_NAME#v}"
+          node scripts/npm-release.cjs publish "$version" "release/react-mediaslide-$version.tgz"
+  npm-verify:
+    needs: npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: mediaslide-release
+          path: release
+      - run: cd release && sha256sum --check SHA256SUMS.txt
+      - name: Wait for the public npm registry and verify integrity
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          node scripts/npm-release.cjs verify "$version" "release/react-mediaslide-$version.tgz"
